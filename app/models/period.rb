@@ -20,4 +20,11 @@
 #
 class Period < ApplicationRecord
   belongs_to :company
+
+  enum period_type: { anual: 'anual', trimestral: 'trimestral', semestral: 'semestral' }
+  enum status: { abierto: 'abierto', cerrado: 'cerrado' }
+
+  validates :name, presence: true
+  validates :period_type, presence: true
+  validates :status, presence: true
 end

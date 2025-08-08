@@ -7,3 +7,9 @@
 #   ["Action", "Comedy", "Drama", "Horror"].each do |genre_name|
 #     MovieGenre.find_or_create_by!(name: genre_name)
 #   end
+
+company = Company.find_or_create_by!(name: "Fondo Nacional de garantias")
+
+(2020..2024).each do |year|
+  Period.find_or_create_by!(name: year.to_s, company: company)
+end
