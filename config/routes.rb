@@ -5,7 +5,7 @@ Rails.application.routes.draw do
     resources :periods
     resources :employees
     resources :dimensions
-    resources :corporative_goals
+    resources :corporate_goals
     resources :departments
     resources :positions
   end

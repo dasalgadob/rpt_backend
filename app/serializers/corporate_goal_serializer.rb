@@ -1,6 +1,6 @@
 # == Schema Information
 #
-# Table name: corporative_goals
+# Table name: corporate_goals
 #
 #  id           :bigint           not null, primary key
 #  description  :string
@@ -13,15 +13,16 @@
 #
 # Indexes
 #
-#  index_corporative_goals_on_dimension_id  (dimension_id)
-#  index_corporative_goals_on_period_id     (period_id)
+#  index_corporate_goals_on_dimension_id  (dimension_id)
+#  index_corporate_goals_on_period_id     (period_id)
 #
 # Foreign Keys
 #
 #  fk_rails_...  (dimension_id => dimensions.id)
 #  fk_rails_...  (period_id => periods.id)
 #
-class CorporativeGoal < ApplicationRecord
-  belongs_to :period
-  belongs_to :dimension
+class CorporateGoalSerializer < ActiveModel::Serializer
+  attributes :id, :description, :percentage, :score
+  has_one :period
+  has_one :dimension
 end
