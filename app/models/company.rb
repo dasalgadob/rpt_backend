@@ -9,4 +9,7 @@
 #  updated_at :datetime         not null
 #
 class Company < ApplicationRecord
+  has_many :departments, dependent: :destroy
+  has_many :periods, dependent: :destroy
+  has_many :employees, through: :departments
 end

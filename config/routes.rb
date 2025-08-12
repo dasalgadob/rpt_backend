@@ -7,6 +7,7 @@ Rails.application.routes.draw do
     resources :dimensions
     resources :corporate_goals
     resources :departments
+    resources :department_goals
     resources :positions
   end
 
