@@ -1,29 +1,30 @@
 class PeriodsController < ApplicationController
+  before_action :set_company
   before_action :set_period, only: %i[ show update destroy ]
 
-  # GET /periods
+  # GET /companies/:company_id/periods
   def index
-    @periods = Period.includes(:company).where(company_id: params[:company_id])
+    @periods = @company.periods
     render json: @periods
   end
 
-  # GET /periods/1
+  # GET /companies/:company_id/periods/1
   def show
     render json: @period
   end
 
-  # POST /periods
+  # POST /companies/:company_id/periods
   def create
-    @period = Period.new(period_params)
+    @period = @company.periods.new(period_params)
 
     if @period.save
-      render json: @period, status: :created, location: @period
+      render json: @period, status: :created
     else
       render json: @period.errors, status: :unprocessable_entity
     end
   end
 
-  # PATCH/PUT /periods/1
+  # PATCH/PUT /companies/:company_id/periods/1
   def update
     if @period.update(period_params)
       render json: @period
@@ -32,19 +33,24 @@ class PeriodsController < ApplicationController
     end
   end
 
-  # DELETE /periods/1
+  # DELETE /companies/:company_id/periods/1
   def destroy
     @period.destroy!
   end
 
   private
+    # Set the company from the URL parameter
+    def set_company
+      @company = Company.find(params[:company_id])
+    end
+
     # Use callbacks to share common setup or constraints between actions.
     def set_period
-      @period = Period.find(params[:id])
+      @period = @company.periods.find(params[:id])
     end
 
     # Only allow a list of trusted parameters through.
     def period_params
-      params.require(:period).permit(:name, :status, :period_type, :company_id)
+      params.require(:period).permit(:name, :status, :period_type)
     end
 end
