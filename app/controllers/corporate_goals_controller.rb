@@ -3,7 +3,7 @@ class CorporateGoalsController < ApplicationController
 
   # GET /corporate_goals
   def index
-    @corporate_goals = CorporateGoal.all
+    @corporate_goals = CorporateGoal.includes(:dimension, :period).where(period_id: params[:period_id])
 
     render json: @corporate_goals
   end
@@ -18,7 +18,7 @@ class CorporateGoalsController < ApplicationController
     @corporate_goal = CorporateGoal.new(corporate_goal_params)
 
     if @corporate_goal.save
-      render json: @corporate_goal, status: :created, location: @corporate_goal
+      render json: @corporate_goal, status: :created
     else
       render json: @corporate_goal.errors, status: :unprocessable_entity
     end

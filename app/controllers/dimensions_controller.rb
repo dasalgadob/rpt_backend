@@ -3,7 +3,7 @@ class DimensionsController < ApplicationController
 
   # GET /dimensions
   def index
-    @dimensions = Dimension.all
+    @dimensions = Dimension.includes(:period).where(period_id: params[:period_id])
 
     render json: @dimensions
   end

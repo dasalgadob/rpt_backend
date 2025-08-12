@@ -3,8 +3,7 @@ class PeriodsController < ApplicationController
 
   # GET /periods
   def index
-    @periods = Period.all
-
+    @periods = Period.includes(:company).where(company_id: params[:company_id])
     render json: @periods
   end
 

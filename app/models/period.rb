@@ -21,6 +21,8 @@
 class Period < ApplicationRecord
   belongs_to :company
 
+  default_scope { order(name: :desc) }
+
   enum period_type: { anual: 'anual', trimestral: 'trimestral', semestral: 'semestral' }
   enum status: { abierto: 'abierto', cerrado: 'cerrado' }
 
