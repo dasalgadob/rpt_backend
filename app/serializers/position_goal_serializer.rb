@@ -25,7 +25,7 @@
 #  fk_rails_...  (position_id => positions.id)
 #
 class PositionGoalSerializer < ActiveModel::Serializer
-  attributes :id, :description, :percentage, :score, :position_id, :position_name
+  attributes :id, :description, :percentage, :score, :position_id, :position_name, :department_id, :department_name, :period_id, :period_name
   belongs_to :period
   belongs_to :position
   
@@ -35,5 +35,21 @@ class PositionGoalSerializer < ActiveModel::Serializer
   
   def position_name
     object.position.name
+  end
+
+  def department_id
+    object.department.id
+  end
+
+  def department_name
+    object.department.name
+  end
+
+  def period_id
+    object.period.id
+  end
+
+  def period_name
+    object.period.name
   end
 end

@@ -8,6 +8,8 @@ class PositionGoalsController < ApplicationController
     position_ids = @company.positions.pluck(:id)
     @position_goals = PositionGoal.includes(:position, :period, :department).where(position_id: position_ids)
     @position_goals = @position_goals.where(period_id: params[:period_id]) if params[:period_id].present?
+    @position_goals = @position_goals.where(department_id: params[:department_id]) if params[:department_id].present?
+    @position_goals = @position_goals.where(position_id: params[:position_id]) if params[:position_id].present?
 
     render json: @position_goals
   end
@@ -61,6 +63,6 @@ class PositionGoalsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def position_goal_params
-      params.require(:position_goal).permit(:position_id, :period_id, :description, :percentage, :score)
+      params.require(:position_goal).permit(:position_id, :period_id, :description, :percentage, :score, :department_id)
     end
 end
