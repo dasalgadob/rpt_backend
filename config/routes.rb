@@ -1,6 +1,5 @@
 Rails.application.routes.draw do
   resources :products
-  resources :position_types
   resources :companies do
     resources :periods
     resources :employees
@@ -10,6 +9,8 @@ Rails.application.routes.draw do
     resources :department_goals
     resources :positions
     resources :position_goals
+    resources :position_type_weights
+    resources :position_types
   end
 
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html

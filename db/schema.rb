@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_08_08_165107) do
+ActiveRecord::Schema[7.1].define(version: 2025_08_13_161942) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -96,10 +96,24 @@ ActiveRecord::Schema[7.1].define(version: 2025_08_08_165107) do
     t.index ["position_id"], name: "index_position_goals_on_position_id"
   end
 
+  create_table "position_type_weights", force: :cascade do |t|
+    t.bigint "position_type_id", null: false
+    t.decimal "corporate_percentage"
+    t.decimal "department_percentage"
+    t.decimal "position_percentage"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "period_id", null: false
+    t.index ["period_id"], name: "index_position_type_weights_on_period_id"
+    t.index ["position_type_id"], name: "index_position_type_weights_on_position_type_id"
+  end
+
   create_table "position_types", force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "company_id", null: false
+    t.index ["company_id"], name: "index_position_types_on_company_id"
   end
 
   create_table "positions", force: :cascade do |t|
@@ -130,6 +144,9 @@ ActiveRecord::Schema[7.1].define(version: 2025_08_08_165107) do
   add_foreign_key "position_goals", "departments"
   add_foreign_key "position_goals", "periods"
   add_foreign_key "position_goals", "positions"
+  add_foreign_key "position_type_weights", "periods"
+  add_foreign_key "position_type_weights", "position_types"
+  add_foreign_key "position_types", "companies"
   add_foreign_key "positions", "companies"
   add_foreign_key "products", "companies"
 end
