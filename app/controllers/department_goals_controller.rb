@@ -3,7 +3,9 @@ class DepartmentGoalsController < ApplicationController
 
   # GET /department_goals
   def index
-    @department_goals = DepartmentGoal.includes(:department, :period).where(period_id: params[:period_id])
+    @department_goals = DepartmentGoal.includes(:department, :period)
+    @department_goals = @department_goals.where(period_id: params[:period_id]) if params[:period_id].present?
+    @department_goals = @department_goals.where(department_id: params[:department_id]) if params[:department_id].present?
 
     render json: @department_goals
   end

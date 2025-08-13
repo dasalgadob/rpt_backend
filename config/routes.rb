@@ -9,6 +9,7 @@ Rails.application.routes.draw do
     resources :departments
     resources :department_goals
     resources :positions
+    resources :position_goals
   end
 
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html

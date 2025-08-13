@@ -11,5 +11,6 @@
 class Company < ApplicationRecord
   has_many :departments, dependent: :destroy
   has_many :periods, dependent: :destroy
+  has_many :positions, dependent: :destroy
   has_many :employees, through: :departments
 end
