@@ -18,7 +18,7 @@ class DimensionsController < ApplicationController
     @dimension = Dimension.new(dimension_params)
 
     if @dimension.save
-      render json: @dimension, status: :created, location: @dimension
+      render json: @dimension, status: :created
     else
       render json: @dimension.errors, status: :unprocessable_entity
     end
