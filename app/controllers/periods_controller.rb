@@ -51,6 +51,6 @@ class PeriodsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def period_params
-      params.require(:period).permit(:name, :status, :period_type)
+      params.require(:period).permit(:name, :status, :period_type, :minimum_score_employee, :company_profit_percentage)
     end
 end
