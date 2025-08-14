@@ -1,30 +1,54 @@
 class EmployeesController < ApplicationController
+  before_action :set_company
   before_action :set_employee, only: %i[ show update destroy ]
 
-  # GET /employees
+  # GET /companies/:company_id/employees
   def index
-    @employees = Employee.all
+    # Get employees through company's departments
+    department_ids = @company.departments.pluck(:id)
+    @employees = Employee.includes(:department, :position_type, :position).where(department_id: department_ids)
+    @employees = @employees.where(position_type_id: params[:position_type_id]) if params[:position_type_id].present?
+    @employees = @employees.where(position_id: params[:position_id]) if params[:position_id].present?
+
+    # Optionally filter by employee ID
+    @employees = @employees.where(employee_id: params[:employee_id]) if params[:employee_id].present?
+
+    # Optionally filter by name
+    @employees = @employees.where("name ILIKE ?", "%#{params[:name]}%") if params[:name].present?
+
+    # Optionally filter by department ID
+    @employees = @employees.where(department_id: params[:department_id]) if params[:department_id].present?
 
     render json: @employees
   end
 
-  # GET /employees/1
+  # GET /companies/:company_id/employees/1
   def show
     render json: @employee
   end
 
-  # POST /employees
+  # POST /companies/:company_id/employees
   def create
     @employee = Employee.new(employee_params)
+    
+    # Ensure the department belongs to the company
+    department = @company.departments.find(employee_params[:department_id])
+    @employee.department = department
+    
+    # Ensure the position belongs to the company (if provided)
+    if employee_params[:position_id].present?
+      position = @company.positions.find(employee_params[:position_id])
+      @employee.position = position
+    end
 
     if @employee.save
-      render json: @employee, status: :created, location: @employee
+      render json: @employee, status: :created
     else
       render json: @employee.errors, status: :unprocessable_entity
     end
   end
 
-  # PATCH/PUT /employees/1
+  # PATCH/PUT /companies/:company_id/employees/1
   def update
     if @employee.update(employee_params)
       render json: @employee
@@ -33,19 +57,26 @@ class EmployeesController < ApplicationController
     end
   end
 
-  # DELETE /employees/1
+  # DELETE /companies/:company_id/employees/1
   def destroy
     @employee.destroy!
   end
 
   private
+    # Set the company from the URL parameter
+    def set_company
+      @company = Company.find(params[:company_id])
+    end
+
     # Use callbacks to share common setup or constraints between actions.
     def set_employee
-      @employee = Employee.find(params[:id])
+      # Ensure the employee belongs to a department in this company
+      department_ids = @company.departments.pluck(:id)
+      @employee = Employee.includes(:department, :position_type, :position).where(department_id: department_ids).find(params[:id])
     end
 
     # Only allow a list of trusted parameters through.
     def employee_params
-      params.require(:employee).permit(:id_employee, :name, :department_id, :position_type_id)
+      params.require(:employee).permit(:employee_id, :name, :department_id, :position_type_id, :position_id)
     end
 end

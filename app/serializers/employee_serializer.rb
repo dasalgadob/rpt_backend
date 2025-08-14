@@ -3,25 +3,54 @@
 # Table name: employees
 #
 #  id               :bigint           not null, primary key
-#  id_employee      :string
 #  name             :string
 #  created_at       :datetime         not null
 #  updated_at       :datetime         not null
 #  department_id    :bigint           not null
+#  employee_id      :string
+#  position_id      :bigint           not null
 #  position_type_id :bigint           not null
 #
 # Indexes
 #
 #  index_employees_on_department_id     (department_id)
+#  index_employees_on_position_id       (position_id)
 #  index_employees_on_position_type_id  (position_type_id)
 #
 # Foreign Keys
 #
 #  fk_rails_...  (department_id => departments.id)
+#  fk_rails_...  (position_id => positions.id)
 #  fk_rails_...  (position_type_id => position_types.id)
 #
 class EmployeeSerializer < ActiveModel::Serializer
-  attributes :id, :id_employee, :name
-  has_one :department
-  has_one :position_type
+  attributes :id, :employee_id, :name, :department_id, :department_name, :position_id, :position_name, :position_type_id, :position_type_name
+
+  belongs_to :department
+  belongs_to :position
+  belongs_to :position_type
+
+  def department_id
+    object.department.id
+  end
+
+  def department_name
+    object.department.name
+  end
+
+  def position_type_id
+    object.position_type.id
+  end
+
+  def position_type_name
+    object.position_type.name
+  end
+
+  def position_id
+    object.position.id if object.position.present?
+  end
+
+  def position_name
+    object.position.name if object.position.present?
+  end
 end

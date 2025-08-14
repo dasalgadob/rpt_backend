@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_08_13_161942) do
+ActiveRecord::Schema[7.1].define(version: 2025_08_13_205001) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -61,14 +61,26 @@ ActiveRecord::Schema[7.1].define(version: 2025_08_13_161942) do
     t.index ["period_id"], name: "index_dimensions_on_period_id"
   end
 
+  create_table "employee_evaluations", force: :cascade do |t|
+    t.bigint "employee_id", null: false
+    t.bigint "period_id", null: false
+    t.string "evaluation_score"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["employee_id"], name: "index_employee_evaluations_on_employee_id"
+    t.index ["period_id"], name: "index_employee_evaluations_on_period_id"
+  end
+
   create_table "employees", force: :cascade do |t|
-    t.string "id_employee"
+    t.string "employee_id"
     t.string "name"
     t.bigint "department_id", null: false
     t.bigint "position_type_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "position_id", null: false
     t.index ["department_id"], name: "index_employees_on_department_id"
+    t.index ["position_id"], name: "index_employees_on_position_id"
     t.index ["position_type_id"], name: "index_employees_on_position_type_id"
   end
 
@@ -138,8 +150,11 @@ ActiveRecord::Schema[7.1].define(version: 2025_08_13_161942) do
   add_foreign_key "department_goals", "periods"
   add_foreign_key "departments", "companies"
   add_foreign_key "dimensions", "periods"
+  add_foreign_key "employee_evaluations", "employees"
+  add_foreign_key "employee_evaluations", "periods"
   add_foreign_key "employees", "departments"
   add_foreign_key "employees", "position_types"
+  add_foreign_key "employees", "positions"
   add_foreign_key "periods", "companies"
   add_foreign_key "position_goals", "departments"
   add_foreign_key "position_goals", "periods"

@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  resources :employee_evaluations
   resources :products
   resources :companies do
     resources :periods
