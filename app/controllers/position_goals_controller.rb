@@ -63,6 +63,6 @@ class PositionGoalsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def position_goal_params
-      params.require(:position_goal).permit(:position_id, :period_id, :description, :percentage, :score, :department_id)
+      params.require(:position_goal).permit(:position_id, :period_id, :description, :percentage, :score, :department_id, :employee_id)
     end
 end

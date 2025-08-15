@@ -2,12 +2,15 @@
 #
 # Table name: employee_evaluations
 #
-#  id               :bigint           not null, primary key
-#  evaluation_score :string
-#  created_at       :datetime         not null
-#  updated_at       :datetime         not null
-#  employee_id      :bigint           not null
-#  period_id        :bigint           not null
+#  id                    :bigint           not null, primary key
+#  corporate_percentage  :decimal(, )
+#  department_percentage :decimal(, )
+#  evaluation_score      :string
+#  position_percentage   :decimal(, )
+#  created_at            :datetime         not null
+#  updated_at            :datetime         not null
+#  employee_id           :bigint           not null
+#  period_id             :bigint           not null
 #
 # Indexes
 #

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_08_14_202753) do
+ActiveRecord::Schema[7.1].define(version: 2025_08_14_210019) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -67,6 +67,9 @@ ActiveRecord::Schema[7.1].define(version: 2025_08_14_202753) do
     t.string "evaluation_score"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.decimal "corporate_percentage"
+    t.decimal "department_percentage"
+    t.decimal "position_percentage"
     t.index ["employee_id"], name: "index_employee_evaluations_on_employee_id"
     t.index ["period_id"], name: "index_employee_evaluations_on_period_id"
   end
@@ -105,7 +108,9 @@ ActiveRecord::Schema[7.1].define(version: 2025_08_14_202753) do
     t.bigint "department_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "employee_id"
     t.index ["department_id"], name: "index_position_goals_on_department_id"
+    t.index ["employee_id"], name: "index_position_goals_on_employee_id"
     t.index ["period_id"], name: "index_position_goals_on_period_id"
     t.index ["position_id"], name: "index_position_goals_on_position_id"
   end
@@ -159,6 +164,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_08_14_202753) do
   add_foreign_key "employees", "positions"
   add_foreign_key "periods", "companies"
   add_foreign_key "position_goals", "departments"
+  add_foreign_key "position_goals", "employees"
   add_foreign_key "position_goals", "periods"
   add_foreign_key "position_goals", "positions"
   add_foreign_key "position_type_weights", "periods"

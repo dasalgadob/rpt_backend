@@ -21,6 +21,6 @@
 #  fk_rails_...  (company_id => companies.id)
 #
 class PeriodSerializer < ActiveModel::Serializer
-  attributes :id, :name, :status, :period_type
+  attributes :id, :name, :status, :period_type, :minimum_score_employee, :company_profit_percentage
   has_one :company
 end
