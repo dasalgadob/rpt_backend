@@ -63,4 +63,12 @@ class PositionGoalSerializer < ActiveModel::Serializer
   def period_name
     object.period.name
   end
+
+  def employee_id
+    object.employee.id if object.employee
+  end
+
+  def employee_name
+    object.employee.name if object.employee
+  end
 end
