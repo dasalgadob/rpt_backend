@@ -9,7 +9,7 @@
 #  department_id    :bigint           not null
 #  employee_id      :string
 #  position_id      :bigint           not null
-#  position_type_id :bigint           not null
+#  position_type_id :bigint
 #
 # Indexes
 #
@@ -24,7 +24,7 @@
 #  fk_rails_...  (position_type_id => position_types.id)
 #
 class EmployeeSerializer < ActiveModel::Serializer
-  attributes :id, :employee_id, :name, :department_id, :department_name, :position_id, :position_name, :position_type_id, :position_type_name
+  attributes :id, :employee_id, :name, :department_id, :department_name, :position_id, :position_name, :position_type_id, :position_type_name, :employee_name, :employee_id
 
   belongs_to :department
   belongs_to :position
@@ -39,11 +39,11 @@ class EmployeeSerializer < ActiveModel::Serializer
   end
 
   def position_type_id
-    object.position_type.id
+    object.position_type&.id
   end
 
   def position_type_name
-    object.position_type.name
+    object.position_type&.name
   end
 
   def position_id
@@ -52,5 +52,13 @@ class EmployeeSerializer < ActiveModel::Serializer
 
   def position_name
     object.position.name if object.position.present?
+  end
+
+  def employee_id
+    object.employee_id
+  end
+
+  def employee_name
+    object.name if object.name.present?
   end
 end
