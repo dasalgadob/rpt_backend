@@ -9,7 +9,7 @@
 #  department_id    :bigint           not null
 #  employee_id      :string
 #  position_id      :bigint           not null
-#  position_type_id :bigint           not null
+#  position_type_id :bigint
 #
 # Indexes
 #

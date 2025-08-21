@@ -9,7 +9,7 @@
 #  department_id    :bigint           not null
 #  employee_id      :string
 #  position_id      :bigint           not null
-#  position_type_id :bigint           not null
+#  position_type_id :bigint
 #
 # Indexes
 #
@@ -25,6 +25,7 @@
 #
 class Employee < ApplicationRecord
   belongs_to :department
-  belongs_to :position_type
+  belongs_to :position_type, optional: true
   belongs_to :position
+  has_many :employee_evaluations, dependent: :destroy
 end

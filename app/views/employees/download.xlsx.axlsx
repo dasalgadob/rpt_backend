@@ -1,0 +1,23 @@
+wb = xlsx_package.workbook
+
+wb.add_worksheet(name: "Empleados") do |sheet|
+  # Add header row with Spanish column names
+  sheet.add_row [
+    "Empleado",
+    "Area", 
+    "ID empleado",
+    "Cargo",
+    "Tipo de posicion"
+  ]
+  
+  # Add employee data
+  @employees.each do |employee|
+    sheet.add_row [
+      employee.name,
+      employee.department.name,
+      employee.employee_id,
+      employee.position.name,
+      employee.position_type.name
+    ]
+  end
+end

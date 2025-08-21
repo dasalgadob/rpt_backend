@@ -40,6 +40,14 @@ gem 'active_model_serializers'
 gem 'seedbank'
 gem 'seed_dump'
 
+# File import gems
+gem 'roo', '~> 2.10'
+gem 'roo-xls'
+
+# File export gems
+gem 'caxlsx', '~> 3.4'
+gem 'caxlsx_rails', '~> 0.6'
+
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[ mri mswin mswin64 mingw x64_mingw ]

@@ -1,9 +1,13 @@
 Rails.application.routes.draw do
-  resources :employee_evaluations
   resources :products
   resources :companies do
     resources :periods
-    resources :employees
+    resources :employees do
+      collection do
+        get :download
+        post :upload
+      end
+    end
     resources :dimensions
     resources :corporate_goals
     resources :departments
@@ -15,6 +19,11 @@ Rails.application.routes.draw do
     resources :profit_references
     resources :profit_reference_has_position_types
     resources :reference_compensations
+    resources :employee_evaluations do
+      collection do
+        post :create_batch_employee_evaluations
+      end
+    end
   end
 
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
