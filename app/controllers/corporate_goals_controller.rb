@@ -5,7 +5,28 @@ class CorporateGoalsController < ApplicationController
   def index
     @corporate_goals = CorporateGoal.includes(:dimension, :period).where(period_id: params[:period_id])
 
-    render json: @corporate_goals
+    # Calculate total_score based on conditions
+    total_score = nil
+    
+    if @corporate_goals.any?
+      # Check if sum of percentages equals 100%
+      total_percentage = @corporate_goals.sum(&:percentage)
+      
+      # Check if all scores have values (not null)
+      all_scores_present = @corporate_goals.all? { |goal| goal.score.present? }
+      
+      if total_percentage == 100.0 && all_scores_present
+        # Calculate weighted average: (percentage1 * score1 + percentage2 * score2 + ...) / 100
+        weighted_sum = @corporate_goals.sum { |goal| (goal.percentage * goal.score) }
+        total_score = weighted_sum / 100.0
+      end
+    end
+
+    render json: {
+      data: ActiveModelSerializers::SerializableResource.new(@corporate_goals, each_serializer: CorporateGoalSerializer).as_json[:data],
+      total_score: total_score&.to_f,
+      total_percentage: @corporate_goals.sum(&:percentage).to_f
+    }
   end
 
   # GET /corporate_goals/1
