@@ -26,6 +26,14 @@ class CorporateGoalSerializer < ActiveModel::Serializer
   belongs_to :period
   belongs_to :dimension
   
+  def percentage
+    object.percentage&.to_f
+  end
+
+  def score
+    object.score&.to_f
+  end
+  
   def dimension
     { id: object.dimension.id, name: object.dimension.name }
   end
