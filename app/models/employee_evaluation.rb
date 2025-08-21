@@ -25,4 +25,14 @@
 class EmployeeEvaluation < ApplicationRecord
   belongs_to :employee
   belongs_to :period
+
+  # Get the position type weight for this evaluation's employee and period
+  def position_type_weight
+    return nil unless employee.position_type
+
+    PositionTypeWeight.find_by(
+      position_type: employee.position_type,
+      period: period
+    )
+  end
 end

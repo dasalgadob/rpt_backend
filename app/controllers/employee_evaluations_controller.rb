@@ -10,8 +10,8 @@ class EmployeeEvaluationsController < ApplicationController
     if open_period
       # Get company employees
       department_ids = @company.departments.pluck(:id)
-      company_employees = Employee.includes(:position, :position_type).where(department_id: department_ids)
-      
+      company_employees = Employee.includes(:position, position_type: :position_type_weights).where(department_id: department_ids)
+
       # Find employees without evaluations for the open period
       existing_evaluation_employee_ids = EmployeeEvaluation.where(
         employee_id: company_employees.pluck(:id),
@@ -46,19 +46,30 @@ class EmployeeEvaluationsController < ApplicationController
       end
     end
     
-    # Get employee evaluations through company's employees
+    # Determine which period to use for evaluations
+    # If period_id is given, use that period; otherwise use open period
+    target_period = if params[:period_id].present?
+                      @company.periods.find_by(id: params[:period_id])
+                    else
+                      open_period
+                    end
+
+    # Get employee evaluations for the target period only
     department_ids = @company.departments.pluck(:id)
     employee_ids = Employee.where(department_id: department_ids).pluck(:id)
-    @employee_evaluations = EmployeeEvaluation.includes(:employee, :period).where(employee_id: employee_ids)
     
+    if target_period
+      @employee_evaluations = EmployeeEvaluation.includes(
+        :period, 
+        employee: [:position, :position_type, { position_type: :position_type_weights }]
+      ).where(employee_id: employee_ids, period: target_period)
+    else
+      @employee_evaluations = EmployeeEvaluation.none
+    end
+
     # Add filtering by name if provided
     if params[:name].present?
       @employee_evaluations = @employee_evaluations.joins(:employee).where("employees.name ILIKE ?", "%#{params[:name]}%")
-    end
-    
-    # Add filtering by period if provided
-    if params[:period_id].present?
-      @employee_evaluations = @employee_evaluations.where(period_id: params[:period_id])
     end
     
     # Add filtering by employee if provided
@@ -66,20 +77,74 @@ class EmployeeEvaluationsController < ApplicationController
       @employee_evaluations = @employee_evaluations.where(employee_id: params[:employee_id])
     end
 
-    render json: @employee_evaluations
+    # Use the same target period for corporate score calculation
+    score_period = target_period
+    
+    # Only calculate corporate score if we have a valid target period
+    corporate_score = if target_period
+                        CorporateGoal.corporate_score_for_period(@company, score_period)
+                      else
+                        nil
+                      end
+
+    render json: {
+      data: ActiveModelSerializers::SerializableResource.new(
+        @employee_evaluations, 
+        each_serializer: EmployeeEvaluationSerializer,
+        scope: { 
+          corporate_score: corporate_score,
+          target_period: target_period,
+          company: @company
+        }
+      ).as_json[:data],
+      corporate_score: corporate_score&.to_f
+    }
   end
 
   # GET /companies/:company_id/employee_evaluations/1
   def show
-    render json: @employee_evaluation
+    # Calculate corporate score for the evaluation's period
+    evaluation_corporate_score = CorporateGoal.corporate_score_for_period(@company, @employee_evaluation.period)
+    
+    render json: @employee_evaluation, 
+           serializer: EmployeeEvaluationSerializer, 
+           scope: { 
+             corporate_score: evaluation_corporate_score,
+             target_period: @employee_evaluation.period,
+             company: @company
+           }
   end
 
   # POST /companies/:company_id/employee_evaluations
   def create
-    @employee_evaluation = @company.employee_evaluations.new(employee_evaluation_params)
+    @employee_evaluation = EmployeeEvaluation.new(employee_evaluation_params)
+    
+    # Ensure the employee belongs to this company
+    department_ids = @company.departments.pluck(:id)
+    employee_ids = Employee.where(department_id: department_ids).pluck(:id)
+    
+    unless employee_ids.include?(@employee_evaluation.employee_id)
+      render json: { error: 'Employee does not belong to this company' }, status: :unprocessable_entity
+      return
+    end
 
     if @employee_evaluation.save
-      render json: @employee_evaluation, status: :created, location: [@company, @employee_evaluation]
+      @employee_evaluation = EmployeeEvaluation.includes(
+        :period, 
+        employee: [:position, :position_type, { position_type: :position_type_weights }]
+      ).find(@employee_evaluation.id)
+      
+      # Calculate corporate score for the evaluation's period
+      evaluation_corporate_score = CorporateGoal.corporate_score_for_period(@company, @employee_evaluation.period)
+      
+      render json: @employee_evaluation, 
+             serializer: EmployeeEvaluationSerializer, 
+             scope: { 
+               corporate_score: evaluation_corporate_score,
+               target_period: @employee_evaluation.period,
+               company: @company
+             },
+             status: :created
     else
       render json: @employee_evaluation.errors, status: :unprocessable_entity
     end
@@ -88,7 +153,16 @@ class EmployeeEvaluationsController < ApplicationController
   # PATCH/PUT /companies/:company_id/employee_evaluations/1
   def update
     if @employee_evaluation.update(employee_evaluation_params)
-      render json: @employee_evaluation
+      # Calculate corporate score for the evaluation's period
+      evaluation_corporate_score = CorporateGoal.corporate_score_for_period(@company, @employee_evaluation.period)
+      
+      render json: @employee_evaluation, 
+             serializer: EmployeeEvaluationSerializer,
+             scope: { 
+               corporate_score: evaluation_corporate_score,
+               target_period: @employee_evaluation.period,
+               company: @company
+             }
     else
       render json: @employee_evaluation.errors, status: :unprocessable_entity
     end
@@ -174,7 +248,18 @@ class EmployeeEvaluationsController < ApplicationController
 
     # Use callbacks to share common setup or constraints between actions.
     def set_employee_evaluation
-      @employee_evaluation = @company.employee_evaluations.find(params[:id])
+      # Get company employee IDs first
+      department_ids = @company.departments.pluck(:id)
+      employee_ids = Employee.where(department_id: department_ids).pluck(:id)
+      
+      @employee_evaluation = EmployeeEvaluation.includes(
+        :period, 
+        employee: [:position, :position_type, { position_type: :position_type_weights }]
+      ).find_by(id: params[:id], employee_id: employee_ids)
+      
+      unless @employee_evaluation
+        render json: { error: 'Employee evaluation not found' }, status: :not_found
+      end
     end
 
     # Only allow a list of trusted parameters through.

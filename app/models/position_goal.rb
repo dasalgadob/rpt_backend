@@ -32,4 +32,33 @@ class PositionGoal < ApplicationRecord
   belongs_to :period
   belongs_to :department
   belongs_to :employee, optional: true
+
+  # Calculate position score for a specific employee and period
+  # Returns the weighted average score if percentages sum to 100% and all scores are present
+  def self.position_score_for_employee(employee, period = nil)
+    return nil unless employee
+
+    # Use the evaluation's period if none provided
+    company = employee.department.company if employee.department
+    period ||= company&.periods&.find_by(status: 'abierto')
+    return nil unless period
+
+    # Get all position goals for this employee and period
+    position_goals = PositionGoal.where(employee: employee, period: period)
+    return nil unless position_goals.any?
+
+    # Check if sum of percentages equals 100%
+    total_percentage = position_goals.sum(:percentage)
+    
+    # Check if all scores have values (not null)
+    all_scores_present = position_goals.all? { |goal| goal.score.present? }
+    
+    if total_percentage == 100.0 && all_scores_present
+      # Calculate weighted average: (percentage1 * score1 + percentage2 * score2 + ...) / 100
+      weighted_sum = position_goals.sum { |goal| (goal.percentage * goal.score) }
+      weighted_sum / 100.0
+    else
+      nil
+    end
+  end
 end

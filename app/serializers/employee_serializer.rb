@@ -24,7 +24,7 @@
 #  fk_rails_...  (position_type_id => position_types.id)
 #
 class EmployeeSerializer < ActiveModel::Serializer
-  attributes :id, :employee_id, :name, :department_id, :department_name, :position_id, :position_name, :position_type_id, :position_type_name, :employee_name, :employee_id
+  attributes :id, :employee_id, :name, :department_id, :department_name, :position_id, :position_name, :position_type_id, :position_type_name, :employee_name, :employee_id, :position_type_weight
 
   belongs_to :department
   belongs_to :position
@@ -60,5 +60,9 @@ class EmployeeSerializer < ActiveModel::Serializer
 
   def employee_name
     object.name if object.name.present?
+  end
+
+  def position_type_weight
+    object.position_type&.position_type_weights if object.position_type.present?
   end
 end
