@@ -25,6 +25,14 @@ class DepartmentGoalSerializer < ActiveModel::Serializer
   attributes :id, :description, :percentage, :score, :department_id, :department_name
   belongs_to :period
   belongs_to :department
+
+  def percentage
+    object.percentage&.to_f
+  end
+
+  def score
+    object.score&.to_f
+  end
   
   def department_id
     object.department.id

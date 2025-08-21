@@ -32,6 +32,14 @@ class PositionGoalSerializer < ActiveModel::Serializer
   belongs_to :period
   belongs_to :position
   
+  def percentage
+    object.percentage&.to_f
+  end
+
+  def score
+    object.score&.to_f
+  end
+
   def position_id
     object.position.id
   end
