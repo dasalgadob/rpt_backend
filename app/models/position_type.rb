@@ -18,4 +18,6 @@
 #
 class PositionType < ApplicationRecord
   belongs_to :company
+  has_many :profit_reference_has_position_types, dependent: :destroy
+  has_many :profit_references, through: :profit_reference_has_position_types
 end

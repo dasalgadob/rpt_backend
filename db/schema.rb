@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_08_14_210019) do
+ActiveRecord::Schema[7.1].define(version: 2025_08_20_180226) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -151,6 +151,32 @@ ActiveRecord::Schema[7.1].define(version: 2025_08_14_210019) do
     t.index ["company_id"], name: "index_products_on_company_id"
   end
 
+  create_table "profit_reference_has_position_types", force: :cascade do |t|
+    t.bigint "profit_reference_id", null: false
+    t.bigint "position_type_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["position_type_id"], name: "index_profit_reference_has_position_types_on_position_type_id"
+    t.index ["profit_reference_id"], name: "idx_on_profit_reference_id_ad1ee1ae05"
+  end
+
+  create_table "profit_references", force: :cascade do |t|
+    t.bigint "period_id", null: false
+    t.decimal "since_percentage_profit"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["period_id"], name: "index_profit_references_on_period_id"
+  end
+
+  create_table "reference_compensations", force: :cascade do |t|
+    t.bigint "profit_reference_id", null: false
+    t.decimal "percentage"
+    t.decimal "compensation"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["profit_reference_id"], name: "index_reference_compensations_on_profit_reference_id"
+  end
+
   add_foreign_key "corporate_goals", "dimensions"
   add_foreign_key "corporate_goals", "periods"
   add_foreign_key "department_goals", "departments"
@@ -172,4 +198,8 @@ ActiveRecord::Schema[7.1].define(version: 2025_08_14_210019) do
   add_foreign_key "position_types", "companies"
   add_foreign_key "positions", "companies"
   add_foreign_key "products", "companies"
+  add_foreign_key "profit_reference_has_position_types", "position_types"
+  add_foreign_key "profit_reference_has_position_types", "profit_references"
+  add_foreign_key "profit_references", "periods"
+  add_foreign_key "reference_compensations", "profit_references"
 end

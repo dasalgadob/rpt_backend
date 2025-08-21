@@ -22,6 +22,14 @@
 #  fk_rails_...  (position_type_id => position_types.id)
 #
 class PositionTypeWeightSerializer < ActiveModel::Serializer
-  attributes :id, :corporate_percentage, :department_percentage, :position_percentage
+  attributes :id, :corporate_percentage, :department_percentage, :position_percentage, :position_type_id, :position_type_name, :period_id
   has_one :position_type
+
+  def position_type_name
+    object.position_type.name if object.position_type
+  end
+
+  def period_id
+    object.period.id if object.period
+  end
 end

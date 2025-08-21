@@ -12,6 +12,9 @@ Rails.application.routes.draw do
     resources :position_goals
     resources :position_type_weights
     resources :position_types
+    resources :profit_references
+    resources :profit_reference_has_position_types
+    resources :reference_compensations
   end
 
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html

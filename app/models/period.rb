@@ -22,6 +22,7 @@
 #
 class Period < ApplicationRecord
   belongs_to :company
+  has_many :profit_references, dependent: :destroy
 
   default_scope { order(name: :desc) }
 

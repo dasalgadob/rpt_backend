@@ -14,4 +14,7 @@ class Company < ApplicationRecord
   has_many :positions, dependent: :destroy
   has_many :position_types, dependent: :destroy
   has_many :employees, through: :departments
+  has_many :profit_references, through: :periods
+  has_many :profit_reference_has_position_types, through: :profit_references
+  has_many :reference_compensations, through: :profit_references
 end
