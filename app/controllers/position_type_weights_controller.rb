@@ -61,6 +61,6 @@ class PositionTypeWeightsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def position_type_weight_params
-      params.require(:position_type_weight).permit(:position_type_id, :period_id, :corporate_percentage, :department_percentage, :position_percentage)
+      params.require(:position_type_weight).permit(:position_type_id, :period_id, :corporate_percentage, :department_percentage, :position_percentage, :job_competencies_percentage)
     end
 end

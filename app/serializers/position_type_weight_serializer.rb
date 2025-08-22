@@ -2,14 +2,15 @@
 #
 # Table name: position_type_weights
 #
-#  id                    :bigint           not null, primary key
-#  corporate_percentage  :decimal(, )
-#  department_percentage :decimal(, )
-#  position_percentage   :decimal(, )
-#  created_at            :datetime         not null
-#  updated_at            :datetime         not null
-#  period_id             :bigint           not null
-#  position_type_id      :bigint           not null
+#  id                          :bigint           not null, primary key
+#  corporate_percentage        :decimal(, )
+#  department_percentage       :decimal(, )
+#  job_competencies_percentage :decimal(, )
+#  position_percentage         :decimal(, )
+#  created_at                  :datetime         not null
+#  updated_at                  :datetime         not null
+#  period_id                   :bigint           not null
+#  position_type_id            :bigint           not null
 #
 # Indexes
 #
@@ -22,7 +23,7 @@
 #  fk_rails_...  (position_type_id => position_types.id)
 #
 class PositionTypeWeightSerializer < ActiveModel::Serializer
-  attributes :id, :corporate_percentage, :department_percentage, :position_percentage, :position_type_id, :position_type_name, :period_id
+  attributes :id, :corporate_percentage, :department_percentage, :position_percentage, :job_competencies_percentage, :position_type_id, :position_type_name, :period_id
   has_one :position_type
 
   def position_type_name

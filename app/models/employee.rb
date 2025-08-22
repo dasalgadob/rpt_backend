@@ -28,4 +28,5 @@ class Employee < ApplicationRecord
   belongs_to :position_type, optional: true
   belongs_to :position
   has_many :employee_evaluations, dependent: :destroy
+  has_one :company, through: :department
 end
