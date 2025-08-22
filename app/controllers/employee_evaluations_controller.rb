@@ -41,6 +41,7 @@ class EmployeeEvaluationsController < ApplicationController
           corporate_percentage: position_type_weight.corporate_percentage,
           department_percentage: position_type_weight.department_percentage,
           position_percentage: position_type_weight.position_percentage,
+          job_competencies_percentage: position_type_weight.job_competencies_percentage, # Added job competencies percentage
           evaluation_score: nil
         )
       end
@@ -222,6 +223,7 @@ class EmployeeEvaluationsController < ApplicationController
         corporate_percentage: position_type_weight.corporate_percentage,
         department_percentage: position_type_weight.department_percentage,
         position_percentage: position_type_weight.position_percentage,
+        job_competencies_percentage: position_type_weight.job_competencies_percentage,
         evaluation_score: nil # Will be filled later
       )
 
