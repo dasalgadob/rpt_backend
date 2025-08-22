@@ -26,8 +26,6 @@ services:
     environment:
       RAILS_ENV: production
       DATABASE_URL: postgres://postgres:password@db:5440/rpt_backend
-      SECRET_KEY_BASE: ${SECRET_KEY_BASE}
-      # Add any other Rails secrets or ENV vars here
     volumes:
       - .:/app
       - bundle_cache:/usr/local/bundle
