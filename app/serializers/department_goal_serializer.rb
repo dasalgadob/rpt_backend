@@ -22,7 +22,7 @@
 #  fk_rails_...  (period_id => periods.id)
 #
 class DepartmentGoalSerializer < ActiveModel::Serializer
-  attributes :id, :description, :percentage, :score, :department_id, :department_name
+  attributes :id, :description, :percentage, :score, :department_id, :department_name, :period
   belongs_to :period
   belongs_to :department
 
@@ -40,5 +40,12 @@ class DepartmentGoalSerializer < ActiveModel::Serializer
   
   def department_name
     object.department.name
+  end
+
+  def period
+    {
+      id: object.period.id,
+      name: object.period.name
+    }
   end
 end
