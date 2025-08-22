@@ -39,10 +39,17 @@ Rails.application.configure do
 
   # Assume all access to the app is happening through a SSL-terminating reverse proxy.
   # Can be used together with config.force_ssl for Strict-Transport-Security and secure cookies.
-  # config.assume_ssl = true
+  config.assume_ssl = true
 
   # Force all access to the app over SSL, use Strict-Transport-Security, and use secure cookies.
   config.force_ssl = true
+  config.action_dispatch.trusted_proxies = [
+    # Trust localhost and Docker internal network
+    IPAddr.new('127.0.0.1'), 
+    IPAddr.new('::1'),
+    IPAddr.new('172.16.0.0/12'), # Docker bridge network
+    IPAddr.new('192.168.0.0/16')
+  ]
 
   # Log to STDOUT by default
   config.logger = ActiveSupport::Logger.new(STDOUT)
