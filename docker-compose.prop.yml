@@ -25,7 +25,7 @@ services:
       - .env.production
     environment:
       RAILS_ENV: production
-      DATABASE_URL: postgres://postgres:password@db:5440/rpt_backend
+      DATABASE_URL: postgres://postgres:password@db:5432/rpt_backend
     volumes:
       - .:/app
       - bundle_cache:/usr/local/bundle
