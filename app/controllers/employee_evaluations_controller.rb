@@ -264,6 +264,6 @@ class EmployeeEvaluationsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def employee_evaluation_params
-      params.require(:employee_evaluation).permit(:employee_id, :period_id, :evaluation_score, :corporate_percentage, :department_percentage, :position_percentage)
+      params.require(:employee_evaluation).permit(:employee_id, :period_id, :evaluation_score, :corporate_percentage, :department_percentage, :position_percentage, :job_competencies_score)
     end
 end

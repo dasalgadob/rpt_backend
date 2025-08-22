@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_08_22_034039) do
+ActiveRecord::Schema[7.1].define(version: 2025_08_22_035054) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -70,6 +70,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_08_22_034039) do
     t.decimal "corporate_percentage"
     t.decimal "department_percentage"
     t.decimal "position_percentage"
+    t.decimal "job_competencies_score"
     t.index ["employee_id"], name: "index_employee_evaluations_on_employee_id"
     t.index ["period_id"], name: "index_employee_evaluations_on_period_id"
   end

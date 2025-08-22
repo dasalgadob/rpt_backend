@@ -2,15 +2,16 @@
 #
 # Table name: employee_evaluations
 #
-#  id                    :bigint           not null, primary key
-#  corporate_percentage  :decimal(, )
-#  department_percentage :decimal(, )
-#  evaluation_score      :string
-#  position_percentage   :decimal(, )
-#  created_at            :datetime         not null
-#  updated_at            :datetime         not null
-#  employee_id           :bigint           not null
-#  period_id             :bigint           not null
+#  id                     :bigint           not null, primary key
+#  corporate_percentage   :decimal(, )
+#  department_percentage  :decimal(, )
+#  evaluation_score       :string
+#  job_competencies_score :decimal(, )
+#  position_percentage    :decimal(, )
+#  created_at             :datetime         not null
+#  updated_at             :datetime         not null
+#  employee_id            :bigint           not null
+#  period_id              :bigint           not null
 #
 # Indexes
 #
@@ -23,7 +24,7 @@
 #  fk_rails_...  (period_id => periods.id)
 #
 class EmployeeEvaluationSerializer < ActiveModel::Serializer
-  attributes :id, :evaluation_score, :corporate_percentage, :department_percentage, :position_percentage, :position_type_weight_info, :corporate_percentage_result, :department_percentage_result, :position_percentage_result, :department_score_result, :position_score_result, :employee, :variable_compensation
+  attributes :id, :evaluation_score, :corporate_percentage, :department_percentage, :position_percentage, :job_competencies_score, :position_type_weight_info, :corporate_percentage_result, :department_percentage_result, :position_percentage_result, :department_score_result, :position_score_result, :employee, :variable_compensation
   has_one :employee
   has_one :period
 
@@ -40,7 +41,8 @@ class EmployeeEvaluationSerializer < ActiveModel::Serializer
       corporate_percentage: weight.corporate_percentage,
       department_percentage: weight.department_percentage,
       position_percentage: weight.position_percentage,
-      position_type_name: weight.position_type.name
+      position_type_name: weight.position_type.name,
+      job_competencies_percentage: weight.job_competencies_percentage
     }
   end
 
