@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_08_22_040742) do
+ActiveRecord::Schema[7.1].define(version: 2025_08_27_180000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -34,14 +34,16 @@ ActiveRecord::Schema[7.1].define(version: 2025_08_22_040742) do
   end
 
   create_table "department_goals", force: :cascade do |t|
-    t.bigint "department_id", null: false
+    t.bigint "department_id"
     t.bigint "period_id", null: false
     t.string "description"
     t.decimal "percentage", precision: 5, scale: 2
     t.decimal "score", precision: 5, scale: 2
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "employee_id"
     t.index ["department_id"], name: "index_department_goals_on_department_id"
+    t.index ["employee_id"], name: "index_department_goals_on_employee_id"
     t.index ["period_id"], name: "index_department_goals_on_period_id"
   end
 
@@ -183,6 +185,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_08_22_040742) do
   add_foreign_key "corporate_goals", "dimensions"
   add_foreign_key "corporate_goals", "periods"
   add_foreign_key "department_goals", "departments"
+  add_foreign_key "department_goals", "employees"
   add_foreign_key "department_goals", "periods"
   add_foreign_key "departments", "companies"
   add_foreign_key "dimensions", "periods"

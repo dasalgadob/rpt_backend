@@ -38,3 +38,8 @@ This is a Ruby on Rails API-only application with PostgreSQL database, configure
 * Ruby version: 3.0.2
 * Database: PostgreSQL 15
 * Rails version: 7.1.5
+
+
+docker-compose -f docker-compose.prop.yml down
+
+docker-compose -f docker-compose.prop.yml up --build -d
