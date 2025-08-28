@@ -10,6 +10,7 @@ class PositionGoalsController < ApplicationController
     @position_goals = @position_goals.where(period_id: params[:period_id]) if params[:period_id].present?
     @position_goals = @position_goals.where(department_id: params[:department_id]) if params[:department_id].present?
     @position_goals = @position_goals.where(position_id: params[:position_id]) if params[:position_id].present?
+    @position_goals = @position_goals.for_employee(params[:employee_id]) if params[:employee_id].present?
 
     render json: @position_goals
   end

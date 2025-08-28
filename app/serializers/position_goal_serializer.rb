@@ -28,7 +28,7 @@
 #  fk_rails_...  (position_id => positions.id)
 #
 class PositionGoalSerializer < ActiveModel::Serializer
-  attributes :id, :description, :percentage, :score, :position_id, :position_name, :department_id, :department_name, :period_id, :period_name, :employee_id, :employee_name
+  attributes :id, :description, :percentage, :score, :position_id, :position_name, :department_id, :department_name, :period_id, :period_name, :employee_id, :employee_name, :employee
   belongs_to :period
   belongs_to :position
   
@@ -70,5 +70,9 @@ class PositionGoalSerializer < ActiveModel::Serializer
 
   def employee_name
     object.employee.name if object.employee
+  end
+
+  def employee
+    object.employee if object.employee
   end
 end

@@ -32,4 +32,13 @@ class Period < ApplicationRecord
   validates :name, presence: true
   validates :period_type, presence: true
   validates :status, presence: true
+  validate :only_one_open_period_per_company, if: -> { status == 'abierto' }
+
+  private
+
+  def only_one_open_period_per_company
+    if Period.where(company_id: company_id, status: 'abierto').where.not(id: id).exists?
+      errors.add(:base, 'Only one open period is allowed per company')
+    end
+  end
 end

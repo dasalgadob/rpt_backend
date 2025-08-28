@@ -38,6 +38,16 @@ class PeriodsController < ApplicationController
     @period.destroy!
   end
 
+  # GET /companies/:company_id/periods/default_period
+  def default_period
+    period = @company.periods.find_by(status: 'abierto')
+    if period
+      render json: period
+    else
+      render json: { error: 'No open period found' }, status: :not_found
+    end
+  end
+
   private
     # Set the company from the URL parameter
     def set_company

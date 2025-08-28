@@ -33,6 +33,8 @@ class PositionGoal < ApplicationRecord
   belongs_to :department
   belongs_to :employee, optional: true
 
+  scope :for_employee, ->(employee_id) { where(employee_id: employee_id) }
+
   # Calculate position score for a specific employee and period
   # Returns the weighted average score if percentages sum to 100% and all scores are present
   def self.position_score_for_employee(employee, period = nil)

@@ -5,7 +5,8 @@ class DepartmentGoalsController < ApplicationController
   def index
     @department_goals = DepartmentGoal.includes(:department, :period)
     @department_goals = @department_goals.where(period_id: params[:period_id]) if params[:period_id].present?
-    @department_goals = @department_goals.where(department_id: params[:department_id]) if params[:department_id].present?
+    @department_goals = @department_goals.for_department(params[:department_id]) if params[:department_id].present?
+    @department_goals = @department_goals.for_employee(params[:employee_id]) if params[:employee_id].present?
 
     # Calculate department percentage analysis
     departments_ok_count = 0
@@ -109,6 +110,6 @@ class DepartmentGoalsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def department_goal_params
-      params.require(:department_goal).permit(:department_id, :period_id, :description, :percentage, :score)
+      params.require(:department_goal).permit(:employee_id, :period_id, :description, :percentage, :score, :department_id)
     end
 end

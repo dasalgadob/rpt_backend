@@ -1,7 +1,9 @@
 Rails.application.routes.draw do
   resources :products
   resources :companies do
-    resources :periods
+    resources :periods do
+      get :default_period, on: :collection
+    end
     resources :employees do
       collection do
         get :download

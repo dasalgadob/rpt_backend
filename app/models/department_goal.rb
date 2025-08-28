@@ -25,8 +25,16 @@
 #  fk_rails_...  (period_id => periods.id)
 #
 class DepartmentGoal < ApplicationRecord
-  belongs_to :department
+  belongs_to :department, optional: true
   belongs_to :period
+  belongs_to :employee, optional: true
+
+  # Scope to filter department goals by department_id through employees
+  scope :for_department, ->(department_id) {
+    joins(:employee).where(employees: { department_id: department_id })
+  }
+
+  scope :for_employee, ->(employee_id) { where(employee_id: employee_id) }
 
   # Calculate department score for a specific department and period
   # Returns the weighted average score if percentages sum to 100% and all scores are present
