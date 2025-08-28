@@ -2,15 +2,18 @@
 #
 # Table name: periods
 #
-#  id                        :bigint           not null, primary key
-#  company_profit_percentage :decimal(5, 2)
-#  minimum_score_employee    :decimal(5, 2)
-#  name                      :string
-#  period_type               :string
-#  status                    :string
-#  created_at                :datetime         not null
-#  updated_at                :datetime         not null
-#  company_id                :bigint           not null
+#  id                            :bigint           not null, primary key
+#  company_profit_percentage     :decimal(5, 2)
+#  minimum_score_area_goals      :decimal(5, 2)
+#  minimum_score_corporate_goals :decimal(5, 2)
+#  minimum_score_employee        :decimal(5, 2)
+#  minimum_score_position_goals  :decimal(5, 2)
+#  name                          :string
+#  period_type                   :string
+#  status                        :string
+#  created_at                    :datetime         not null
+#  updated_at                    :datetime         not null
+#  company_id                    :bigint           not null
 #
 # Indexes
 #
@@ -33,6 +36,9 @@ class Period < ApplicationRecord
   validates :period_type, presence: true
   validates :status, presence: true
   validate :only_one_open_period_per_company, if: -> { status == 'abierto' }
+  validates :company_profit_percentage, :minimum_score_area_goals, :minimum_score_corporate_goals,
+            :minimum_score_employee, :minimum_score_position_goals,
+            numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
 
   private
 

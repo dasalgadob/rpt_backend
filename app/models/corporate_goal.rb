@@ -4,6 +4,7 @@
 #
 #  id           :bigint           not null, primary key
 #  description  :string
+#  goal         :text
 #  percentage   :decimal(5, 2)
 #  score        :decimal(5, 2)
 #  created_at   :datetime         not null

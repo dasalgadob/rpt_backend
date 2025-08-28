@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_08_27_180000) do
+ActiveRecord::Schema[7.1].define(version: 2025_08_27_181500) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -29,6 +29,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_08_27_180000) do
     t.bigint "dimension_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.text "goal"
     t.index ["dimension_id"], name: "index_corporate_goals_on_dimension_id"
     t.index ["period_id"], name: "index_corporate_goals_on_period_id"
   end
@@ -42,6 +43,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_08_27_180000) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "employee_id"
+    t.text "goal"
     t.index ["department_id"], name: "index_department_goals_on_department_id"
     t.index ["employee_id"], name: "index_department_goals_on_employee_id"
     t.index ["period_id"], name: "index_department_goals_on_period_id"
@@ -100,6 +102,9 @@ ActiveRecord::Schema[7.1].define(version: 2025_08_27_180000) do
     t.datetime "updated_at", null: false
     t.decimal "minimum_score_employee", precision: 5, scale: 2
     t.decimal "company_profit_percentage", precision: 5, scale: 2
+    t.decimal "minimum_score_corporate_goals", precision: 5, scale: 2
+    t.decimal "minimum_score_area_goals", precision: 5, scale: 2
+    t.decimal "minimum_score_position_goals", precision: 5, scale: 2
     t.index ["company_id"], name: "index_periods_on_company_id"
   end
 
@@ -113,6 +118,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_08_27_180000) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "employee_id"
+    t.text "goal"
     t.index ["department_id"], name: "index_position_goals_on_department_id"
     t.index ["employee_id"], name: "index_position_goals_on_employee_id"
     t.index ["period_id"], name: "index_position_goals_on_period_id"

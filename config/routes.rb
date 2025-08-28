@@ -12,7 +12,12 @@ Rails.application.routes.draw do
     end
     resources :dimensions
     resources :corporate_goals
-    resources :departments
+    resources :departments do
+      collection do
+        get :download
+        post :upload
+      end
+    end
     resources :department_goals
     resources :positions
     resources :position_goals
