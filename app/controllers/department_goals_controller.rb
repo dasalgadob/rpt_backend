@@ -110,6 +110,6 @@ class DepartmentGoalsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def department_goal_params
-      params.require(:department_goal).permit(:employee_id, :period_id, :description, :percentage, :score, :department_id)
+      params.require(:department_goal).permit(:employee_id, :period_id, :description, :percentage, :score, :department_id, :goal)
     end
 end

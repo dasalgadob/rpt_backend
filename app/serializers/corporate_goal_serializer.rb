@@ -23,7 +23,7 @@
 #  fk_rails_...  (period_id => periods.id)
 #
 class CorporateGoalSerializer < ActiveModel::Serializer
-  attributes :id, :description, :percentage, :score, :dimension, :period
+  attributes :id, :description, :percentage, :score, :dimension, :period, :goal
   belongs_to :period
   belongs_to :dimension
   
