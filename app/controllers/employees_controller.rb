@@ -109,102 +109,15 @@ class EmployeesController < ApplicationController
     end
 
     begin
-      # Open the uploaded file (auto-detect format)
-      spreadsheet = Roo::Spreadsheet.open(params[:file].tempfile)
-      
-      results = {
-        created: 0,
-        updated: 0,
-        errors: []
-      }
-
-      # Process each row (skip header row)
-      (2..spreadsheet.last_row).each do |row|
-        begin
-          # Read row data
-          name = spreadsheet.cell(row, 1)&.to_s&.strip
-          area_name = spreadsheet.cell(row, 2)&.to_s&.strip
-          employee_id = spreadsheet.cell(row, 3)&.to_s&.strip
-          position_name = spreadsheet.cell(row, 4)&.to_s&.strip
-          position_type_name = spreadsheet.cell(row, 5)&.to_s&.strip
-
-          # Skip empty rows
-          next if name.blank? && area_name.blank? && employee_id.blank?
-
-          # Find or create department
-          department = @company.departments.find_by(name: area_name)
-          if department.nil? && area_name.present?
-            department = @company.departments.create!(name: area_name)
-          end
-
-          # Find or create position
-          position = nil
-          if position_name.present?
-            position = @company.positions.find_by(name: position_name)
-            if position.nil?
-              position = @company.positions.create!(name: position_name)
-            end
-          end
-
-          # Find or create position type
-          position_type = nil
-          if position_type_name.present?
-            position_type = @company.position_types.find_by(name: position_type_name)
-            if position_type.nil?
-              position_type = @company.position_types.create!(name: position_type_name)
-            end
-          end
-
-          # Find existing employee by employee_id or create new one
-          existing_employee = nil
-          if employee_id.present?
-            # Find employee through company's departments
-            department_ids = @company.departments.pluck(:id)
-            existing_employee = Employee.where(department_id: department_ids)
-                                      .find_by(employee_id: employee_id)
-          end
-
-          if existing_employee
-            # Update existing employee
-            existing_employee.update!(
-              name: name.presence || existing_employee.name,
-              department: department || existing_employee.department,
-              position: position || existing_employee.position,
-              position_type: position_type || existing_employee.position_type
-            )
-            results[:updated] += 1
-          else
-            # Create new employee
-            Employee.create!(
-              name: name,
-              employee_id: employee_id,
-              department: department,
-              position: position,
-              position_type: position_type
-            )
-            results[:created] += 1
-          end
-
-        rescue => e
-          results[:errors] << {
-            row: row,
-            message: e.message,
-            data: {
-              name: name,
-              area_name: area_name,
-              employee_id: employee_id,
-              position_name: position_name,
-              position_type_name: position_type_name
-            }
-          }
-        end
+      service = EmployeesUploadService.new(@company, params[:file])
+      unless service.process
+        render json: { error: "No file provided or invalid file" }, status: :unprocessable_entity
+        return
       end
-
       render json: {
         message: "File processed successfully",
-        results: results
+        results: service.results
       }, status: :ok
-
     rescue => e
       render json: { error: "Error processing file: #{e.message}" }, status: :unprocessable_entity
     end

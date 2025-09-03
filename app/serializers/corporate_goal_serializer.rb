@@ -2,15 +2,21 @@
 #
 # Table name: corporate_goals
 #
-#  id           :bigint           not null, primary key
-#  description  :string
-#  goal         :text
-#  percentage   :decimal(5, 2)
-#  score        :decimal(5, 2)
-#  created_at   :datetime         not null
-#  updated_at   :datetime         not null
-#  dimension_id :bigint           not null
-#  period_id    :bigint           not null
+#  id                  :bigint           not null, primary key
+#  description         :string
+#  formula_above_value :text
+#  formula_below_value :text
+#  goal                :text
+#  goal_achieved       :decimal(, )
+#  goal_ceil           :decimal(, )
+#  goal_floor          :decimal(, )
+#  goal_value          :decimal(, )
+#  percentage          :decimal(5, 2)
+#  score               :decimal(5, 2)
+#  created_at          :datetime         not null
+#  updated_at          :datetime         not null
+#  dimension_id        :bigint           not null
+#  period_id           :bigint           not null
 #
 # Indexes
 #
@@ -23,7 +29,7 @@
 #  fk_rails_...  (period_id => periods.id)
 #
 class CorporateGoalSerializer < ActiveModel::Serializer
-  attributes :id, :description, :percentage, :score, :dimension, :period, :goal
+  attributes :id, :description, :percentage, :score, :dimension, :period, :goal, :goal_floor, :goal_ceil, :goal_value, :formula_below_value, :formula_above_value, :goal_achieved
   belongs_to :period
   belongs_to :dimension
   
@@ -41,5 +47,17 @@ class CorporateGoalSerializer < ActiveModel::Serializer
 
   def period
     { id: object.period.id, name: object.period.name }
+  end
+
+  def goal_floor
+    object.goal_floor&.to_f
+  end
+
+    def goal_value
+    object.goal_value&.to_f
+  end
+
+    def goal_ceil
+    object.goal_ceil&.to_f
   end
 end

@@ -69,6 +69,6 @@ class ProfitReferencesController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def profit_reference_params
-      params.require(:profit_reference).permit(:period_id, :since_percentage_profit)
+      params.require(:profit_reference).permit(:period_id, :since_percentage_profit, :equation)
     end
 end

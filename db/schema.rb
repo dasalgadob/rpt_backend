@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_08_27_181500) do
+ActiveRecord::Schema[7.1].define(version: 2025_09_03_120000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -30,6 +30,12 @@ ActiveRecord::Schema[7.1].define(version: 2025_08_27_181500) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.text "goal"
+    t.decimal "goal_floor"
+    t.decimal "goal_value"
+    t.decimal "goal_ceil"
+    t.decimal "goal_achieved"
+    t.text "formula_below_value"
+    t.text "formula_above_value"
     t.index ["dimension_id"], name: "index_corporate_goals_on_dimension_id"
     t.index ["period_id"], name: "index_corporate_goals_on_period_id"
   end
@@ -176,6 +182,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_08_27_181500) do
     t.decimal "since_percentage_profit"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.text "equation"
     t.index ["period_id"], name: "index_profit_references_on_period_id"
   end
 

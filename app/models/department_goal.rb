@@ -39,13 +39,13 @@ class DepartmentGoal < ApplicationRecord
 
   # Calculate department score for a specific department and period
   # Returns the weighted average score if percentages sum to 100% and all scores are present
-  def self.department_score_for_period(company, period = nil, department = nil)
+  def self.department_score_for_period(employee = nil)
     # Use open period if none provided
-    period ||= company.periods.find_by(status: 'abierto')
-    return nil unless period && department
+    period ||= employee.company.periods.find_by(status: 'abierto')
+    return nil unless period && employee
 
     # Get all department goals for this department and period
-    department_goals = DepartmentGoal.where(department: department, period: period)
+    department_goals = DepartmentGoal.where(employee: employee, period: period)
     return nil unless department_goals.any?
 
     # Check if sum of percentages equals 100%

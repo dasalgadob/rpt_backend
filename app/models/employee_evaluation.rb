@@ -40,8 +40,8 @@ class EmployeeEvaluation < ApplicationRecord
 
   # Calculate variable compensation based on profit reference and evaluation score
   def variable_compensation
-    puts "Calculating variable compensation for EmployeeEvaluation ID: #{id}, Employee ID: #{employee.id}, PositionType ID: #{employee.position_type.id}, Period ID: #{period.id}, Company Profit Percentage: #{period.company_profit_percentage}, Evaluation Score: #{evaluation_score(employee.company)}"
-    return 0 unless employee.position_type && period.company_profit_percentage && evaluation_score(employee.company)
+    puts "Calculating variable compensation for EmployeeEvaluation ID: #{id}, Employee ID: #{employee.id}, PositionType ID: #{employee.position_type.id}, Period ID: #{period.id}, Company Profit Percentage: #{period.company_profit_percentage}, Evaluation Score: #{evaluation_score}"
+    return 0 unless employee.position_type && period.company_profit_percentage && evaluation_score
     # Find the appropriate profit reference for this employee's position type and company profit
     profit_reference = ProfitReference.for_company_profit_and_position_type(
       period,
@@ -65,30 +65,39 @@ class EmployeeEvaluation < ApplicationRecord
   end
 
   # --- Calculation methods moved from serializer ---
-  def corporate_percentage_result(company)
-    return nil unless company && corporate_percentage && period
-    corporate_score = CorporateGoal.corporate_score_for_period(company, period)
+  def corporate_percentage_result
+    return nil unless corporate_percentage && period
+    corporate_score = CorporateGoal.total_score(period.id)
+    pt = employee.position_type
+    ptw = PositionTypeWeight.where(period: period, position_type: pt).first
+    puts "ptw: #{ptw.corporate_percentage}"
     return nil unless corporate_score
-    (corporate_score * (corporate_percentage / 100.0)).round(2)
+    (corporate_score * (ptw.corporate_percentage / 100.0)).round(2)
   end
 
-  def department_percentage_result(company)
-    return nil unless period && company && department_percentage && employee&.department
-    department_score = DepartmentGoal.department_score_for_period(company, period, employee.department)
-    return nil unless department_score
-    (department_score * (department_percentage / 100.0)).round(2)
+  def department_percentage_result
+    return nil unless period && employee
+    department_score = DepartmentGoal.department_score_for_period(employee)
+    puts "department score: #{department_score}"
+    pt = employee.position_type
+    ptw = PositionTypeWeight.where(period: period, position_type: pt).first
+    puts "ptw: #{ptw}"
+    return nil unless department_score && ptw
+    (department_score * (ptw.department_percentage / 100.0)).round(2)
   end
 
   def position_percentage_result
     return nil unless period && position_percentage && employee
     position_score = PositionGoal.position_score_for_employee(employee, period)
-    return nil unless position_score
-    (position_score * (position_percentage / 100.0)).round(2)
+    pt = employee.position_type
+    ptw = PositionTypeWeight.where(period: period, position_type: pt).first
+    return nil unless position_score && ptw
+    (position_score * (ptw.position_percentage / 100.0)).round(2)
   end
 
   def department_score_result(company)
     return nil unless period && company && employee&.department
-    DepartmentGoal.department_score_for_period(company, period, employee.department)
+    DepartmentGoal.department_score_for_period(employee)
   end
 
   def position_score_result
@@ -96,11 +105,19 @@ class EmployeeEvaluation < ApplicationRecord
     PositionGoal.position_score_for_employee(employee, period)
   end
 
-  def evaluation_score(company)
-    corp = corporate_percentage_result(company)
-    dept = department_percentage_result(company)
+  def competencies_score_result
+    pt = employee.position_type
+    ptw = PositionTypeWeight.where(period: period, position_type: pt).first
+    return nil unless job_competencies_score && ptw
+    (job_competencies_score * (ptw.job_competencies_percentage / 100.0)).round(2)
+  end
+
+  def evaluation_score
+    corp = corporate_percentage_result
+    dept = department_percentage_result
     pos  = position_percentage_result
-    return nil if corp.nil? || dept.nil? || pos.nil?
-    (corp + dept + pos).round(2)
+    competencies = competencies_score_result
+    return nil if corp.nil? || dept.nil? || pos.nil? || competencies.nil?
+    (corp + dept + pos + competencies).round(2)
   end
 end

@@ -67,6 +67,6 @@ class CorporateGoalsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def corporate_goal_params
-      params.require(:corporate_goal).permit(:period_id, :description, :percentage, :score, :dimension_id, :goal)
+      params.require(:corporate_goal).permit(:period_id, :description, :percentage, :score, :dimension_id, :goal, :goal_floor, :goal_value, :goal_ceil, :formula_below_value, :formula_above_value, :goal_achieved)
     end
 end

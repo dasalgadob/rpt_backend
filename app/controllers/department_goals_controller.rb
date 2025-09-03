@@ -102,6 +102,15 @@ class DepartmentGoalsController < ApplicationController
     @department_goal.destroy!
   end
 
+  def upload
+    company = Company.find(params[:company_id])
+    service = DepartmentGoalsUploadService.new(company, params[:file])
+    if !service.process
+      render json: { error: 'No file uploaded' }, status: :bad_request and return
+    end
+    render json: { created: service.created, updated: service.updated, skipped: service.skipped }, status: :ok
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_department_goal

@@ -48,11 +48,11 @@ class EmployeeEvaluationSerializer < ActiveModel::Serializer
   end
 
   def corporate_percentage_result
-    object.corporate_percentage_result(scope&.dig(:company))
+    object.corporate_percentage_result
   end
 
   def department_percentage_result
-    object.department_percentage_result(scope&.dig(:company))
+    object.department_percentage_result
   end
 
   def position_percentage_result
@@ -68,6 +68,6 @@ class EmployeeEvaluationSerializer < ActiveModel::Serializer
   end
 
   def evaluation_score
-    object.evaluation_score(scope&.dig(:company))
+    object.evaluation_score
   end
 end
