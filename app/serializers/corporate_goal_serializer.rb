@@ -38,7 +38,8 @@ class CorporateGoalSerializer < ActiveModel::Serializer
   end
 
   def score
-    object.score&.to_f
+    s = object.score
+    s.nil? ? nil : s.to_f.round(2)
   end
   
   def dimension
@@ -53,11 +54,15 @@ class CorporateGoalSerializer < ActiveModel::Serializer
     object.goal_floor&.to_f
   end
 
-    def goal_value
+  def goal_value
     object.goal_value&.to_f
   end
 
-    def goal_ceil
+  def goal_ceil
     object.goal_ceil&.to_f
+  end
+
+  def goal_achieved
+    object.goal_achieved&.to_f
   end
 end
