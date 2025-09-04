@@ -40,28 +40,37 @@ class EmployeeEvaluation < ApplicationRecord
 
   # Calculate variable compensation based on profit reference and evaluation score
   def variable_compensation
-    puts "Calculating variable compensation for EmployeeEvaluation ID: #{id}, Employee ID: #{employee.id}, PositionType ID: #{employee.position_type.id}, Period ID: #{period.id}, Company Profit Percentage: #{period.company_profit_percentage}, Evaluation Score: #{evaluation_score}"
-    return 0 unless employee.position_type && period.company_profit_percentage && evaluation_score
-    # Find the appropriate profit reference for this employee's position type and company profit
-    profit_reference = ProfitReference.for_company_profit_and_position_type(
-      period,
-      period.company_profit_percentage,
-      employee.position_type
-    )
-    puts "Found Profit Reference: #{profit_reference.inspect}" if profit_reference
+    # Ensure required data exists
+    return 0 unless employee&.position_type && period
 
-    return 0 unless profit_reference
+    # Compute evaluation score (unrounded) and rounded value
+    raw_score = evaluation_score
+    return 0 if raw_score.nil?
 
-    # Use the calculated evaluation_score (method) if possible
-    score_percentage = evaluation_score(employee.company).to_f.round(0).to_i rescue evaluation_score.to_f.round(0).to_i
-    puts "Score Percentage: #{score_percentage}" if score_percentage
-    # Find the matching reference compensation
-    reference_compensation = profit_reference.reference_compensations.find_by(percentage: score_percentage)
+    rounded_score = raw_score.to_f.round(0)
 
-    return 0 unless reference_compensation
+    # Find ProfitReference whose since_percentage_profit matches the rounded score
+    # and that is linked to the employee's position_type
+    profit_reference = ProfitReference
+      .joins(:profit_reference_has_position_types)
+      .where(period: period, since_percentage_profit: rounded_score)
+      .where(profit_reference_has_position_types: { position_type_id: employee.position_type_id })
+      .first
 
-    # Return the compensation amount (assuming there's an amount field)
-    reference_compensation.compensation || 0
+    return 0 unless profit_reference&.equation.present?
+
+    # Define x as the unrounded evaluation score and evaluate the stored equation
+    x = raw_score.to_f / 100
+    begin
+      puts "x: #{x}"
+      puts "equation: #{profit_reference.equation}"
+      result = eval(profit_reference.equation, binding)
+      # Ensure numeric and round to 2 decimals
+      (result.is_a?(Numeric) ? result : result.to_f).round(2)
+    rescue StandardError => e
+      Rails.logger.error("variable_compensation eval error for EmployeeEvaluation ##{id}: #{e.message}")
+      0
+    end
   end
 
   # --- Calculation methods moved from serializer ---

@@ -18,7 +18,7 @@
 #  fk_rails_...  (period_id => periods.id)
 #
 class ProfitReferenceSerializer < ActiveModel::Serializer
-  attributes :id, :since_percentage_profit, :period_name, :period_id, :profit_reference_has_position_types_data
+  attributes :id, :since_percentage_profit, :period_name, :period_id, :profit_reference_has_position_types_data, :equation
   has_one :period
   
   def period_name
@@ -37,5 +37,9 @@ class ProfitReferenceSerializer < ActiveModel::Serializer
         position_type_name: prh_pt.position_type&.name
       }
     end
+  end
+
+  def since_percentage_profit
+    object.since_percentage_profit&.to_f
   end
 end
