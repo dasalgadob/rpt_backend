@@ -40,22 +40,29 @@ class EmployeeEvaluation < ApplicationRecord
 
   # Calculate variable compensation based on profit reference and evaluation score
   def variable_compensation
+    puts "Calculating variable_compensation for EmployeeEvaluation ##{id}"
     # Ensure required data exists
     return 0 unless employee&.position_type && period
-
-    # Compute evaluation score (unrounded) and rounded value
+    puts "employee position_type_id: #{employee.inspect}"
+    # Compute evaluation score (unrounded) and keep for x
     raw_score = evaluation_score
+    puts("🚀 ~ raw_score:", raw_score)
     return 0 if raw_score.nil?
 
-    rounded_score = raw_score.to_f.round(0)
-
-    # Find ProfitReference whose since_percentage_profit matches the rounded score
+    # Replace rounded_score with the percentage from CorporateGoal 'Utilidad' for this period
+    utilidad_percentage = CorporateGoal.find_by(period: period, goal: 'Utilidad')&.score
+    # Round to remove decimal part
+    utilidad_percentage = utilidad_percentage.to_f.round(0) unless utilidad_percentage.nil?
+    puts "utilidad_percentage: #{utilidad_percentage}"
+    return 0 if utilidad_percentage.nil?
+    # Find ProfitReference whose since_percentage_profit matches the 'Utilidad' percentage
     # and that is linked to the employee's position_type
     profit_reference = ProfitReference
       .joins(:profit_reference_has_position_types)
-      .where(period: period, since_percentage_profit: rounded_score)
+      .where(period: period, since_percentage_profit: utilidad_percentage)
       .where(profit_reference_has_position_types: { position_type_id: employee.position_type_id })
       .first
+    puts("🚀 ~ profit_reference:", profit_reference)
 
     return 0 unless profit_reference&.equation.present?
 
