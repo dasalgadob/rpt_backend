@@ -15,6 +15,11 @@ class DepartmentGoalsController < ApplicationController
     total_percentage = nil
     total_score = nil
 
+    #calculate employees percentage analysis
+    employees_ok_count = 0
+    total_employees = 0
+    employees_error = []
+
     # If filtering by specific department, calculate its total percentage and score
     if params[:department_id].present?
       total_percentage = @department_goals.sum(&:percentage).to_f
@@ -29,6 +34,9 @@ class DepartmentGoalsController < ApplicationController
     if params[:period_id].present? && params[:department_id].blank?
       # Group goals by department for the specific period
       goals_by_department = @department_goals.group_by(&:department)
+      puts "department_goals_count: #{@department_goals.count}"
+      goals_by_employee = @department_goals.group_by(&:employee)
+      puts "goals_by_employee_count: #{goals_by_employee.count}"
       
       # Get all departments that belong to the company (from the nested route)
       company = Company.find(params[:company_id]) if params[:company_id].present?
@@ -45,6 +53,24 @@ class DepartmentGoalsController < ApplicationController
           departments_error << department.name
         end
       end
+
+      #calculate all employees
+      all_employees = company.employees
+      total_employees = all_employees.count
+      all_employees.each do |employee|
+        puts "goals_by_employee count: #{goals_by_employee.count}"
+        puts "goals_by_employee: #{goals_by_employee.inspect}"
+        puts "employee: #{employee.inspect}"
+        employee_goals = goals_by_employee[employee] || []
+        employee_total_percentage = employee_goals.sum(&:percentage)
+
+        if employee_total_percentage == 100.0
+          employees_ok_count += 1
+        else
+          employees_error << employee.name
+        end
+      end
+
     end
 
     # Build response data
