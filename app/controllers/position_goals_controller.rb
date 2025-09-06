@@ -23,10 +23,34 @@ class PositionGoalsController < ApplicationController
   # POST /companies/:company_id/position_goals
   def create
     @position_goal = PositionGoal.new(position_goal_params)
-    
-    # Ensure the position belongs to the company
-    position = @company.positions.find(position_goal_params[:position_id])
-    @position_goal.position = position
+
+    position_id = position_goal_params[:position_id]
+    employee_id = position_goal_params[:employee_id]
+
+    if position_id.present?
+      begin
+        position = @company.positions.find(position_id)
+        @position_goal.position = position
+      rescue ActiveRecord::RecordNotFound
+        return render json: { error: 'Position not found in this company' }, status: :unprocessable_entity
+      end
+    elsif employee_id.present?
+      employee = Employee.find_by(id: employee_id)
+      return render json: { error: 'Employee not found' }, status: :unprocessable_entity unless employee
+
+      if employee.department&.company_id != @company.id
+        return render json: { error: 'Employee does not belong to this company' }, status: :unprocessable_entity
+      end
+
+      if employee.position.nil?
+        return render json: { error: 'Employee does not have an associated position' }, status: :unprocessable_entity
+      end
+
+      @position_goal.position = employee.position
+      @position_goal.department_id ||= employee.department_id
+    else
+      return render json: { error: 'position_id or employee_id must be provided' }, status: :unprocessable_entity
+    end
 
     if @position_goal.save
       render json: @position_goal, status: :created

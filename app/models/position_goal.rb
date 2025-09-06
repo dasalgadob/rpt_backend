@@ -29,7 +29,7 @@
 #  fk_rails_...  (position_id => positions.id)
 #
 class PositionGoal < ApplicationRecord
-  belongs_to :position
+  belongs_to :position, optional: true
   belongs_to :period
   belongs_to :department
   belongs_to :employee, optional: true

@@ -44,17 +44,30 @@ class EmployeeEvaluation < ApplicationRecord
     # Ensure required data exists
     return 0 unless employee&.position_type && period
     puts "employee position_type_id: #{employee.inspect}"
+
+    # Guard: if any base score < 90.0, return 0
+    corporate_score   = CorporateGoal.total_score(period.id)
+    department_score  = DepartmentGoal.department_score_for_period(employee)
+    position_score    = PositionGoal.position_score_for_employee(employee, period)
+    competencies_base = job_competencies_score
+    if [corporate_score, department_score, position_score, competencies_base].any? { |v| !v.nil? && v < 90.0 }
+      puts "One or more base scores below 90.0 -> variable_compensation = 0"
+      return 0
+    end
+
     # Compute evaluation score (unrounded) and keep for x
     raw_score = evaluation_score
     puts("🚀 ~ raw_score:", raw_score)
     return 0 if raw_score.nil?
 
     # Replace rounded_score with the percentage from CorporateGoal 'Utilidad' for this period
-    utilidad_percentage = CorporateGoal.find_by(period: period, goal: 'Utilidad')&.score
-    # Round to remove decimal part
-    utilidad_percentage = utilidad_percentage.to_f.round(0) unless utilidad_percentage.nil?
-    puts "utilidad_percentage: #{utilidad_percentage}"
-    return 0 if utilidad_percentage.nil?
+    utilidad_raw = CorporateGoal.find_by(period: period, goal: 'Utilidad')&.score
+    return 0 if utilidad_raw.nil?
+    # If utilidad score is below 95.0, return 0
+    return 0 if utilidad_raw.to_f < 95.0
+    # Round to remove decimal part for matching ProfitReference
+    utilidad_percentage = utilidad_raw.to_f.round(0)
+    puts "utilidad_percentage: #{utilidad_percentage} (raw: #{utilidad_raw})"
     # Find ProfitReference whose since_percentage_profit matches the 'Utilidad' percentage
     # and that is linked to the employee's position_type
     profit_reference = ProfitReference
