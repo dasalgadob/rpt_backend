@@ -17,7 +17,14 @@ class Company < ApplicationRecord
   has_many :profit_references, through: :periods
   has_many :profit_reference_has_position_types, through: :profit_references
   has_many :reference_compensations, through: :profit_references
+
   has_many :corporate_goals, through: :periods
+  has_many :department_goals, through: :periods
+  has_many :position_goals, through: :periods
+
+  has_many :dimensions, through: :periods
+  has_many :employee_evaluations, through: :periods
+  has_many :position_type_weights, through: :periods
 
   validates :name, presence: true
 

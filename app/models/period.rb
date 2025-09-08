@@ -27,6 +27,14 @@ class Period < ApplicationRecord
   belongs_to :company
   has_many :profit_references, dependent: :destroy
 
+  has_many :corporate_goals
+  has_many :department_goals
+  has_many :position_goals
+
+  has_many :dimensions
+  has_many :employee_evaluations
+  has_many :position_type_weights
+
   default_scope { order(name: :desc) }
 
   enum period_type: { anual: 'anual', trimestral: 'trimestral', semestral: 'semestral' }
