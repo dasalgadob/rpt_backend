@@ -26,6 +26,7 @@ class Company < ApplicationRecord
   has_many :employee_evaluations, through: :periods
   has_many :position_type_weights, through: :periods
 
-  validates :name, presence: true
+  has_many :users, dependent: :nullify
 
+  validates :name, presence: true
 end

@@ -40,12 +40,23 @@ When making authenticated requests, include these headers:
 
 ### 1. Register a new user:
 ```bash
+# Register without company (optional)
 curl -X POST http://localhost:3010/auth \
   -H "Content-Type: application/json" \
   -d '{
     "email": "user@example.com",
     "password": "password123",
     "password_confirmation": "password123"
+  }'
+
+# Register with company (optional)
+curl -X POST http://localhost:3010/auth \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "user@example.com",
+    "password": "password123",
+    "password_confirmation": "password123",
+    "company_id": 1
   }'
 ```
 

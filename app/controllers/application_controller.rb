@@ -8,9 +8,7 @@ class ApplicationController < ActionController::API
   
   # Helper method to get current user's company context if needed
   def current_user_company
-    # You can customize this based on your business logic
-    # For now, just return the first company or implement user-company association
-    current_user&.companies&.first
+    current_user&.company
   end
   
   private
