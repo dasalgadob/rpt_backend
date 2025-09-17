@@ -28,7 +28,11 @@ Rails.application.routes.draw do
       end
     end
     resources :positions
-    resources :position_goals
+    resources :position_goals do
+      collection do
+        get :download
+      end
+    end
     resources :position_type_weights
     resources :position_types
     resources :profit_references

@@ -73,6 +73,16 @@ class PositionGoalsController < ApplicationController
     @position_goal.destroy!
   end
 
+  # GET /companies/:company_id/position_goals/download
+  def download
+    service = PositionGoalsDownloadService.new(@company, params[:period_id])
+    excel_data = service.generate_excel
+    
+    send_data excel_data, 
+              filename: service.filename,
+              type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+  end
+
   private
     # Set the company from the URL parameter
     def set_company
