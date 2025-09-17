@@ -31,6 +31,7 @@ Rails.application.routes.draw do
     resources :position_goals do
       collection do
         get :download
+        post :upload
       end
     end
     resources :position_type_weights
