@@ -73,6 +73,14 @@ class PositionGoalsController < ApplicationController
     @position_goal.destroy!
   end
 
+  def upload
+    service = PositionGoalsUploadService.new(@company, params[:file])
+    if !service.process
+      render json: { error: 'No file uploaded' }, status: :bad_request and return
+    end
+    render json: { created: service.created, updated: service.updated, skipped: service.skipped }, status: :ok
+  end
+
   # GET /companies/:company_id/position_goals/download
   def download
     service = PositionGoalsDownloadService.new(@company, params[:period_id])
