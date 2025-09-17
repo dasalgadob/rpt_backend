@@ -21,7 +21,11 @@ Rails.application.routes.draw do
         post :upload
       end
     end
-    resources :department_goals
+    resources :department_goals do
+      collection do
+        get :download
+      end
+    end
     resources :positions
     resources :position_goals
     resources :position_type_weights
