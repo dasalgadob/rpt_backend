@@ -118,7 +118,7 @@ class EmployeeEvaluation < ApplicationRecord
     position_score = PositionGoal.position_score_for_employee(employee, period)
     pt = employee.position_type
     ptw = PositionTypeWeight.where(period: period, position_type: pt).first
-    return nil unless position_score && ptw
+    return 0 unless position_score && ptw
     (position_score * (ptw.position_percentage / 100.0)).round(2)
   end
 
