@@ -43,3 +43,16 @@ This is a Ruby on Rails API-only application with PostgreSQL database, configure
 docker-compose -f docker-compose.prop.yml down
 
 docker-compose -f docker-compose.prop.yml up --build -d
+
+
+## test user
+User.create!(
+  email: "user_valoracion@fng.com",
+  password: "password123",
+  password_confirmation: "password123",
+  company_id: 2
+)
+
+docker-compose exec web bundle exec rake db:seed:goals
+
+docker-compose exec web bundle exec rake goals:redistribute_percentages

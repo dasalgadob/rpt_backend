@@ -21,7 +21,7 @@ services:
     build: .
     command: bash -c "bundle install && rm -f tmp/pids/server.pid && bundle exec rails server -b 0.0.0.0"
     volumes:
-      - .:/app
+      - .:/app:cached
       - bundle_cache:/usr/local/bundle
     ports:
       - "3010:3000"
