@@ -28,10 +28,10 @@ namespace :goals do
           department_goals.each do |goal|
             original_percentage = goal.percentage
             # Calculate new percentage: (original / total) * 100
-            new_percentage = (original_percentage / total_dept_percentage) * 100
-            goal.update!(percentage: new_percentage.round(2))
+            new_percentage = ((original_percentage / total_dept_percentage) * 100).round(2)
+            goal.update!(percentage: new_percentage)
             
-            puts "    Goal ID #{goal.id}: #{original_percentage}% → #{new_percentage.round(2)}%"
+            puts "    Goal ID #{goal.id}: #{original_percentage}% → #{new_percentage}%"
             department_goals_updated += 1
           end
         else
@@ -50,10 +50,10 @@ namespace :goals do
           position_goals.each do |goal|
             original_percentage = goal.percentage
             # Calculate new percentage: (original / total) * 100
-            new_percentage = (original_percentage / total_pos_percentage) * 100
-            goal.update!(percentage: new_percentage.round(2))
+            new_percentage = ((original_percentage / total_pos_percentage) * 100).round(2)
+            goal.update!(percentage: new_percentage)
             
-            puts "    Goal ID #{goal.id}: #{original_percentage}% → #{new_percentage.round(2)}%"
+            puts "    Goal ID #{goal.id}: #{original_percentage}% → #{new_percentage}%"
             position_goals_updated += 1
           end
         else
