@@ -28,6 +28,8 @@ class EmployeeEvaluation < ApplicationRecord
   belongs_to :employee
   belongs_to :period
 
+  default_scope { joins(:employee).order('employees.name') }
+
   # Get the position type weight for this evaluation's employee and period
   def position_type_weight
     return nil unless employee.position_type
