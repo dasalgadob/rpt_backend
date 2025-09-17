@@ -24,6 +24,7 @@ Rails.application.routes.draw do
     resources :department_goals do
       collection do
         get :download
+        post :upload
       end
     end
     resources :positions
