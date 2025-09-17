@@ -16,8 +16,8 @@ class EmployeesUploadService
       begin
         employee_id = spreadsheet.cell(row, 1)&.to_s&.strip
         name = spreadsheet.cell(row, 2)&.to_s&.strip
-        position_name = spreadsheet.cell(row, 3)&.to_s&.strip
-        area_name = spreadsheet.cell(row, 4)&.to_s&.strip
+        area_name = spreadsheet.cell(row, 3)&.to_s&.strip
+        position_name = spreadsheet.cell(row, 4)&.to_s&.strip
         position_type_name = spreadsheet.cell(row, 5)&.to_s&.strip
 
         next if name.blank? && area_name.blank? && employee_id.blank?

@@ -11,7 +11,7 @@ class EmployeesController < ApplicationController
     @employees = @employees.where(position_id: params[:position_id]) if params[:position_id].present?
 
     # Optionally filter by employee ID
-    @employees = @employees.where(employee_id: params[:employee_id]) if params[:employee_id].present?
+    @employees = @employees.where(id: params[:employee_id]) if params[:employee_id].present?
 
     # Optionally filter by name
     @employees = @employees.where("name ILIKE ?", "%#{params[:name]}%") if params[:name].present?
@@ -64,39 +64,11 @@ class EmployeesController < ApplicationController
 
   # GET /companies/:company_id/employees/download
   def download
-    # Get employees through company's departments
-    department_ids = @company.departments.pluck(:id)
-    @employees = Employee.includes(:department, :position_type, :position).where(department_id: department_ids)
-
-    # Generate Excel file
-    package = Axlsx::Package.new
-    workbook = package.workbook
+    service = EmployeesDownloadService.new(@company)
+    excel_data = service.generate_excel
     
-    workbook.add_worksheet(name: "Empleados") do |sheet|
-      # Add header row with Spanish column names
-      sheet.add_row [
-        "Empleado",
-        "Area", 
-        "ID empleado",
-        "Cargo",
-        "Tipo de posicion"
-      ]
-      
-      # Add employee data
-      @employees.each do |employee|
-        sheet.add_row [
-          employee.name,
-          employee.department.name,
-          employee.employee_id,
-          employee.position.name,
-          employee.position_type.name
-        ]
-      end
-    end
-
-    # Send the file
-    send_data package.to_stream.read,
-      filename: "empleados_#{@company.name.parameterize}.xlsx",
+    send_data excel_data,
+      filename: service.filename,
       type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
       disposition: 'attachment'
   end
