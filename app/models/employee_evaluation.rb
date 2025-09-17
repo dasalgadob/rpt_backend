@@ -50,15 +50,11 @@ class EmployeeEvaluation < ApplicationRecord
     department_score  = DepartmentGoal.department_score_for_period(employee)
     position_score    = PositionGoal.position_score_for_employee(employee, period)
     competencies_base = job_competencies_score
-    if [corporate_score, department_score, position_score, competencies_base].any? { |v| !v.nil? && v < 90.0 }
-      puts "One or more base scores below 90.0 -> variable_compensation = 0"
-      return 0
-    end
 
     # Compute evaluation score (unrounded) and keep for x
     raw_score = evaluation_score
     puts("🚀 ~ raw_score:", raw_score)
-    return 0 if raw_score.nil?
+    return 0 if raw_score.nil? || raw_score < 90.0
 
     # Replace rounded_score with the percentage from CorporateGoal 'Utilidad' for this period
     utilidad_raw = CorporateGoal.find_by(period: period, goal: 'Utilidad')&.score
