@@ -123,12 +123,12 @@ class EmployeeEvaluation < ApplicationRecord
   end
 
   def department_score_result(company)
-    return nil unless period && company && employee&.department
+    return 0 unless period && company && employee&.department
     DepartmentGoal.department_score_for_period(employee)
   end
 
   def position_score_result
-    return nil unless period && employee
+    return 0 unless period && employee
     PositionGoal.position_score_for_employee(employee, period)
   end
 
@@ -140,11 +140,10 @@ class EmployeeEvaluation < ApplicationRecord
   end
 
   def evaluation_score
-    corp = corporate_percentage_result
-    dept = department_percentage_result
-    pos  = position_percentage_result
-    competencies = competencies_score_result
-    return nil if corp.nil? || dept.nil? || pos.nil? || competencies.nil?
+    corp = corporate_percentage_result || 0
+    dept = department_percentage_result || 0
+    pos  = position_percentage_result || 0
+    competencies = competencies_score_result || 0
     (corp + dept + pos + competencies).round(2)
   end
 end

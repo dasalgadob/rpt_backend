@@ -62,9 +62,9 @@ class CorporateGoal < ApplicationRecord
     return 0 if goal_achieved.nil? || goal_floor.nil? || goal_value.nil?
     result = 0 
     x = goal_achieved
-    if x >= goal_floor && x < goal_value
+    if x >= goal_floor && x <= goal_value
       result = (eval("#{formula_below_value}") * 100)&.to_f
-    elsif x >= goal_value && x <= goal_ceil
+    elsif x > goal_value && x <= goal_ceil
       result = (eval("#{formula_above_value}") * 100)&.to_f
     end
     if result > 110.0

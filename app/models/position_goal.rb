@@ -48,7 +48,7 @@ class PositionGoal < ApplicationRecord
 
     # Get all position goals for this employee and period
     position_goals = PositionGoal.where(employee: employee, period: period)
-    return nil unless position_goals.any?
+    return 0 unless position_goals.any?
 
     # Check if sum of percentages equals 100%
     total_percentage = position_goals.sum(:percentage)
