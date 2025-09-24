@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_09_08_204637) do
+ActiveRecord::Schema[7.1].define(version: 2025_09_24_012944) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -111,6 +111,12 @@ ActiveRecord::Schema[7.1].define(version: 2025_09_08_204637) do
     t.decimal "minimum_score_corporate_goals", precision: 5, scale: 2
     t.decimal "minimum_score_area_goals", precision: 5, scale: 2
     t.decimal "minimum_score_position_goals", precision: 5, scale: 2
+    t.text "formula_above_value"
+    t.text "formula_below_value"
+    t.decimal "goal_floor"
+    t.decimal "goal_value"
+    t.decimal "goal_ceil"
+    t.decimal "goal_achieved"
     t.index ["company_id"], name: "index_periods_on_company_id"
   end
 

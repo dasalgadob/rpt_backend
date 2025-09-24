@@ -4,6 +4,12 @@
 #
 #  id                            :bigint           not null, primary key
 #  company_profit_percentage     :decimal(5, 2)
+#  formula_above_value           :text
+#  formula_below_value           :text
+#  goal_achieved                 :decimal(, )
+#  goal_ceil                     :decimal(, )
+#  goal_floor                    :decimal(, )
+#  goal_value                    :decimal(, )
 #  minimum_score_area_goals      :decimal(5, 2)
 #  minimum_score_corporate_goals :decimal(5, 2)
 #  minimum_score_employee        :decimal(5, 2)

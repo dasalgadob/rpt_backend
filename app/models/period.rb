@@ -4,6 +4,12 @@
 #
 #  id                            :bigint           not null, primary key
 #  company_profit_percentage     :decimal(5, 2)
+#  formula_above_value           :text
+#  formula_below_value           :text
+#  goal_achieved                 :decimal(, )
+#  goal_ceil                     :decimal(, )
+#  goal_floor                    :decimal(, )
+#  goal_value                    :decimal(, )
 #  minimum_score_area_goals      :decimal(5, 2)
 #  minimum_score_corporate_goals :decimal(5, 2)
 #  minimum_score_employee        :decimal(5, 2)
@@ -48,11 +54,50 @@ class Period < ApplicationRecord
             :minimum_score_employee, :minimum_score_position_goals,
             numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
 
+  def score
+    calculate_goal_result&.to_f
+  end
+
+  def minimum_score_employee
+    read_attribute(:minimum_score_employee)&.to_f
+  end
+
+  def goal_floor
+    read_attribute(:goal_floor)&.to_f
+  end
+
+  def goal_value
+    read_attribute(:goal_value)&.to_f
+  end
+
+  def goal_ceil
+    read_attribute(:goal_ceil)&.to_f
+  end
+
+  def goal_achieved
+    read_attribute(:goal_achieved)&.to_f
+  end
+
   private
 
   def only_one_open_period_per_company
     if Period.where(company_id: company_id, status: 'abierto').where.not(id: id).exists?
       errors.add(:base, 'Only one open period is allowed per company')
     end
+  end
+
+  def calculate_goal_result
+    return 0 if goal_achieved.nil? || goal_floor.nil? || goal_value.nil?
+    result = 0 
+    x = goal_achieved
+    if x >= goal_floor && x <= goal_value
+      result = (eval("#{formula_below_value}") * 100)&.to_f
+    elsif x > goal_value && x <= goal_ceil
+      result = (eval("#{formula_above_value}") * 100)&.to_f
+    end
+    if result > 110.0
+      result = 110.0
+    end
+    result
   end
 end
