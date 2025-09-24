@@ -56,13 +56,24 @@ class EmployeeEvaluationsController < ApplicationController
                     end
 
     # Get employee evaluations for the target period only
-    department_ids = @company.departments.pluck(:id)
-    employee_ids = Employee.where(department_id: department_ids).pluck(:id)
+    # Use specific department if provided, otherwise use all company departments
+    department_ids = if params[:department_id].present?
+                       [params[:department_id].to_i]
+                     else
+                       @company.departments.pluck(:id)
+                     end
+    
+    # Build employee query with department and position filtering
+    employee_query = Employee.where(department_id: department_ids)
+    employee_query = employee_query.where(position_id: params[:position_id]) if params[:position_id].present?
+    employee_query = employee_query.where(position_type_id: params[:position_type_id]) if params[:position_type_id].present?
+    # Get the filtered employee IDs
+    employee_ids = employee_query.pluck(:id)
     
     if target_period
       @employee_evaluations = EmployeeEvaluation.includes(
         :period, 
-        employee: [:position, :position_type, { position_type: :position_type_weights }]
+        employee: [:department, :position, :position_type, { position_type: :position_type_weights }]
       ).where(employee_id: employee_ids, period: target_period)
     else
       @employee_evaluations = EmployeeEvaluation.none
@@ -132,7 +143,7 @@ class EmployeeEvaluationsController < ApplicationController
     if @employee_evaluation.save
       @employee_evaluation = EmployeeEvaluation.includes(
         :period, 
-        employee: [:position, :position_type, { position_type: :position_type_weights }]
+        employee: [:department, :position, :position_type, { position_type: :position_type_weights }]
       ).find(@employee_evaluation.id)
       
       # Calculate corporate score for the evaluation's period
@@ -242,6 +253,60 @@ class EmployeeEvaluationsController < ApplicationController
     }, status: :created
   end
 
+  # GET /companies/:company_id/employee_evaluations/download
+  def download
+    # Determine which period to use for evaluations
+    target_period = if params[:period_id].present?
+                      @company.periods.find_by(id: params[:period_id])
+                    else
+                      @company.periods.find_by(status: 'abierto')
+                    end
+
+    unless target_period
+      render json: { error: 'No period found' }, status: :unprocessable_entity
+      return
+    end
+
+    # Get employee evaluations for the target period with same filtering logic as index
+    department_ids = if params[:department_id].present?
+                       [params[:department_id].to_i]
+                     else
+                       @company.departments.pluck(:id)
+                     end
+    
+    # Build employee query with department and position filtering
+    employee_query = Employee.where(department_id: department_ids)
+    employee_query = employee_query.where(position_id: params[:position_id]) if params[:position_id].present?
+    employee_query = employee_query.where(position_type_id: params[:position_type_id]) if params[:position_type_id].present?
+    employee_ids = employee_query.pluck(:id)
+
+    @employee_evaluations = EmployeeEvaluation.includes(
+      :period, 
+      employee: [:department, :position, :position_type, { position_type: :position_type_weights }]
+    ).where(employee_id: employee_ids, period: target_period)
+
+    # Add filtering by name if provided
+    if params[:name].present?
+      @employee_evaluations = @employee_evaluations.joins(:employee).where("employees.name ILIKE ?", "%#{params[:name]}%")
+    end
+    
+    # Add filtering by employee if provided
+    if params[:employee_id].present?
+      @employee_evaluations = @employee_evaluations.where(employee_id: params[:employee_id])
+    end
+
+    # Calculate corporate score for the period
+    corporate_score = CorporateGoal.corporate_score_for_period(@company, target_period)
+
+    # Generate Excel file
+    excel_data = EmployeeEvaluationsDownloadService.new(@employee_evaluations, @company, corporate_score).call
+    
+    # Send file
+    send_data excel_data,
+              filename: "employee_evaluations_#{@company.name.parameterize}_#{target_period.name.parameterize}_#{Date.current.strftime('%Y%m%d')}.xlsx",
+              type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+  end
+
   private
     # Set the parent company
     def set_company
@@ -256,7 +321,7 @@ class EmployeeEvaluationsController < ApplicationController
       
       @employee_evaluation = EmployeeEvaluation.includes(
         :period, 
-        employee: [:position, :position_type, { position_type: :position_type_weights }]
+        employee: [:department, :position, :position_type, { position_type: :position_type_weights }]
       ).find_by(id: params[:id], employee_id: employee_ids)
       
       unless @employee_evaluation

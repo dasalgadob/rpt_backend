@@ -41,6 +41,7 @@ Rails.application.routes.draw do
     resources :reference_compensations
     resources :employee_evaluations do
       collection do
+        get :download
         post :create_batch_employee_evaluations
       end
     end

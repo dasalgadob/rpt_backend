@@ -31,11 +31,11 @@ class EmployeeSerializer < ActiveModel::Serializer
   belongs_to :position_type
 
   def department_id
-    object.department.id
+    object.department_id
   end
 
   def department_name
-    object.department.name
+    object.department&.name
   end
 
   def position_type_id
@@ -47,11 +47,11 @@ class EmployeeSerializer < ActiveModel::Serializer
   end
 
   def position_id
-    object.position.id if object.position.present?
+    object.position&.id
   end
 
   def position_name
-    object.position.name if object.position.present?
+    object.position&.name
   end
 
   def employee_id
@@ -59,10 +59,10 @@ class EmployeeSerializer < ActiveModel::Serializer
   end
 
   def employee_name
-    object.name if object.name.present?
+    object.name
   end
 
   def position_type_weight
-    object.position_type&.position_type_weights if object.position_type.present?
+    object.position_type&.position_type_weights
   end
 end
