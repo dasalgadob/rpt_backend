@@ -30,6 +30,12 @@ class DepartmentGoal < ApplicationRecord
   belongs_to :period
   belongs_to :employee, optional: true
 
+  # Validations
+  validates :score, numericality: { 
+    greater_than_or_equal_to: 0, 
+    less_than_or_equal_to: 110 
+  }, allow_nil: true
+
   # Scope to filter department goals by department_id through employees
   scope :for_department, ->(department_id) {
     joins(:employee).where(employees: { department_id: department_id })

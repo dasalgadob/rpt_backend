@@ -36,6 +36,12 @@ class PositionGoal < ApplicationRecord
 
   scope :for_employee, ->(employee_id) { where(employee_id: employee_id) }
 
+    # Validations
+  validates :score, numericality: { 
+    greater_than_or_equal_to: 0, 
+    less_than_or_equal_to: 110 
+  }, allow_nil: true
+
   # Calculate position score for a specific employee and period
   # Returns the weighted average score if percentages sum to 100% and all scores are present
   def self.position_score_for_employee(employee, period = nil)
