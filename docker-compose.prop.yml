@@ -26,6 +26,9 @@ services:
     environment:
       RAILS_ENV: production
       DATABASE_URL: postgres://postgres:password@db:5432/rpt_backend
+      RAILS_MAX_THREADS: 5
+      RAILS_MIN_THREADS: 2
+      WEB_CONCURRENCY: 2
     volumes:
       - .:/app
       - bundle_cache:/usr/local/bundle

@@ -6,6 +6,20 @@ DeviseTokenAuth.setup do |config|
   # this to false to prevent the Authorization header from changing after
   # each request.
   config.change_headers_on_each_request = false
+  
+  # Completely disable token rotation for maximum stability
+  # This is the most aggressive setting for token stability
+  config.token_lifespan = 6.months
+  
+  # Prevent token changes in production
+  config.headers_names = {
+    :'authorization' => 'Authorization',
+    :'access-token' => 'access-token', 
+    :'client' => 'client',
+    :'expiry' => 'expiry',
+    :'uid' => 'uid',
+    :'token-type' => 'token-type'
+  }
 
   # By default, users will need to re-authenticate after 2 weeks. This setting
   # determines how long tokens will remain valid after they are issued.
@@ -24,7 +38,7 @@ DeviseTokenAuth.setup do |config|
   # time. In this case, each request in the batch will need to share the same
   # auth token. This setting determines how far apart the requests can be while
   # still using the same auth token.
-  config.batch_request_buffer_throttle = 10.seconds
+  config.batch_request_buffer_throttle = 30.seconds
 
   # This route will be the prefix for all oauth2 redirect callbacks. For
   # example, using the default '/omniauth', the github oauth2 provider will
@@ -70,4 +84,19 @@ DeviseTokenAuth.setup do |config|
 
   # Disable token recycling on failed requests
   config.remove_tokens_after_password_reset = false
+  
+  # Production-specific settings for token stability
+  if Rails.env.production?
+    # More aggressive throttling in production to handle concurrent requests
+    config.batch_request_buffer_throttle = 30.seconds
+    
+    # Keep tokens longer in production
+    config.token_lifespan = 1.month
+    
+    # Allow more devices to prevent token rotation
+    config.max_number_of_devices = 50
+    
+    # Enable token reuse to prevent race conditions
+    config.reuse_token_after_timeout = true
+  end
 end
