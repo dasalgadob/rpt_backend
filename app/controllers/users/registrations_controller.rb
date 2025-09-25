@@ -1,11 +1,12 @@
 # frozen_string_literal: true
 
-class Users::RegistrationsController < DeviseTokenAuth::RegistrationsController
+class Users::RegistrationsController < Devise::RegistrationsController
+  respond_to :json
   # Skip authentication for registration actions since they should be public
   skip_before_action :authenticate_user!
 
-  # before_action :configure_sign_up_params, only: [:create]
-  # before_action :configure_account_update_params, only: [:update]
+  before_action :configure_sign_up_params, only: [:create]
+  before_action :configure_account_update_params, only: [:update]
 
   # GET /resource/sign_up
   # def new
@@ -41,14 +42,32 @@ class Users::RegistrationsController < DeviseTokenAuth::RegistrationsController
   #   super
   # end
 
-  protected
+  private
 
-  def sign_up_params
-    params.permit(:name, :nickname, :image, :email, :password, :password_confirmation, :company_id)
+  def respond_with(current_user, _opts = {})
+    if current_user.persisted?
+      render json: {
+        status: {
+          code: 200,
+          message: 'Signed up successfully.',
+          data: { user: current_user }
+        }
+      }, status: :ok
+    else
+      render json: {
+        status: {
+          message: "User couldn't be created successfully. #{current_user.errors.full_messages.to_sentence}"
+        }
+      }, status: :unprocessable_entity
+    end
   end
 
-  def account_update_params
-    params.permit(:name, :nickname, :image, :email, :password, :password_confirmation, :current_password, :company_id)
+  def configure_sign_up_params
+    devise_parameter_sanitizer.permit(:sign_up, keys: [:name, :nickname, :image, :company_id])
+  end
+
+  def configure_account_update_params
+    devise_parameter_sanitizer.permit(:account_update, keys: [:name, :nickname, :image, :company_id])
   end
 
   # The path used after sign up.

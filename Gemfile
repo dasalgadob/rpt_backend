@@ -37,7 +37,7 @@ gem "rack-cors"
 
 # Authentication
 gem 'devise'
-gem 'devise_token_auth'
+gem 'devise-jwt'
 
 gem 'active_model_serializers'
 

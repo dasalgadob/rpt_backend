@@ -1,5 +1,5 @@
 Rails.application.routes.draw do
-  mount_devise_token_auth_for 'User', at: 'auth', controllers: {
+  devise_for :users, path: 'auth', controllers: {
     registrations: 'users/registrations',
     sessions: 'users/sessions'
   }
