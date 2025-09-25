@@ -1,5 +1,6 @@
 class ApplicationController < ActionController::API
   include DeviseTokenAuth::Concerns::SetUserByToken
+  include DeviseTokenAuthOverride
   
   # Require authentication for all controllers by default
   before_action :authenticate_user!, unless: :skip_authentication?
