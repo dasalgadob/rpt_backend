@@ -2,25 +2,32 @@ module DeviseTokenAuthOverride
   extend ActiveSupport::Concern
 
   included do
-    # NUCLEAR OPTION: Completely prevent any token changes
+    # Return EXISTING headers without creating new tokens
     def update_auth_header
-      # DO ABSOLUTELY NOTHING - freeze the tokens completely
-      return
-    end
-
-    # Override batch request validation to always allow token reuse
-    def ensure_batched_request_consistency
-      # Always return true - never invalidate tokens
-      true
-    end
-
-    # Override token validation to always accept existing tokens
-    def valid_token?(token, client_id = nil)
-      return false unless @resource && token && client_id
+      return unless @resource && @client_id
       
-      # Just check if token exists, don't rotate it
-      @resource.tokens.has_key?(client_id) && 
-      @resource.tokens[client_id]['token'] == token
+      # Get the current token data from request headers
+      current_token = request.headers['access-token']
+      current_client = request.headers['client'] 
+      current_uid = request.headers['uid']
+      
+      return unless current_token && current_client && current_uid
+      
+      # Return the SAME token that was sent in the request - no rotation
+      response.headers['access-token'] = current_token
+      response.headers['client'] = current_client
+      response.headers['uid'] = current_uid
+      response.headers['token-type'] = 'Bearer'
+      
+      # Get expiry from the stored token
+      if @resource.tokens[current_client]
+        response.headers['expiry'] = @resource.tokens[current_client]['expiry'].to_s
+      end
+    end
+
+    # Override batch request validation to always pass
+    def ensure_batched_request_consistency
+      true
     end
   end
 end

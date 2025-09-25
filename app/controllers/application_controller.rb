@@ -1,6 +1,6 @@
 class ApplicationController < ActionController::API
   include DeviseTokenAuth::Concerns::SetUserByToken
-  include DeviseTokenAuthOverride
+  # include DeviseTokenAuthOverride  # Temporarily disabled
   
   # Require authentication for all controllers by default
   before_action :authenticate_user!, unless: :skip_authentication?
@@ -18,6 +18,8 @@ class ApplicationController < ActionController::API
   def skip_authentication?
     # Skip authentication for devise_token_auth controllers
     controller_path.start_with?('devise_token_auth/') ||
+    # Skip authentication for custom auth controllers
+    controller_path.start_with?('users/') ||
     # Skip authentication for health checks and any other public endpoints
     controller_name == 'rails/health' ||
     (controller_name == 'application' && action_name == 'health') ||

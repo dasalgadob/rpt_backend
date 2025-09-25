@@ -66,22 +66,6 @@ DeviseTokenAuth.setup do |config|
   # send email, set it to true. (This is a setting for compatibility)
   # config.send_confirmation_email = true
 
-  # Additional stability settings
-  # Increase token lifespan if needed (default is 2 weeks)
-  # config.token_lifespan = 1.month
-
   # Disable token recycling on failed requests
   config.remove_tokens_after_password_reset = false
-  
-  # Additional anti-rotation settings
-  config.default_confirm_success_url = nil
-  config.default_password_reset_url = nil
-  
-  # Override environment-specific settings if needed
-  if Rails.env.production? || Rails.env.development?
-    # Force same settings everywhere
-    config.batch_request_buffer_throttle = 10.minutes
-    config.max_number_of_devices = 1000
-    config.token_lifespan = 1.year
-  end
 end
