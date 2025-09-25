@@ -97,6 +97,6 @@ DeviseTokenAuth.setup do |config|
     config.max_number_of_devices = 50
     
     # Enable token reuse to prevent race conditions
-    config.reuse_token_after_timeout = true
+    # config.reuse_token_after_timeout = true
   end
 end
