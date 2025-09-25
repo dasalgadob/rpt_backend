@@ -55,7 +55,7 @@ class Period < ApplicationRecord
             numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
 
   def score
-    calculate_goal_result&.to_f
+    calculate_goal_result&.to_f&.round(2)
   end
 
   def minimum_score_employee
