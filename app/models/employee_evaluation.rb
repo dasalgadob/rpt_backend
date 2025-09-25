@@ -58,8 +58,8 @@ class EmployeeEvaluation < ApplicationRecord
     puts("🚀 ~ raw_score:", raw_score)
     return 0 if raw_score.nil? || raw_score < 90.0
 
-    # Replace rounded_score with the percentage from period.company_profit_percentage for this period
-    utilidad_raw = period.company_profit_percentage
+    # Replace rounded_score with the percentage from period.score for this period
+    utilidad_raw = period.score
     return 0 if utilidad_raw.nil?
     # If utilidad score is below 95.0, return 0
     return 0 if utilidad_raw.to_f < 95.0
