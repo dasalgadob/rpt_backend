@@ -6,7 +6,7 @@ class PositionGoalsController < ApplicationController
   def index
     # Get position goals through company's positions
     position_ids = @company.positions.pluck(:id)
-    @position_goals = PositionGoal.includes(:position, :period, :department).where(position_id: position_ids)
+    @position_goals = PositionGoal.includes(:position, :period, :department, :employee).where(position_id: position_ids)
     @position_goals = @position_goals.where(period_id: params[:period_id]) if params[:period_id].present?
     @position_goals = @position_goals.where(department_id: params[:department_id]) if params[:department_id].present?
     @position_goals = @position_goals.where(position_id: params[:position_id]) if params[:position_id].present?

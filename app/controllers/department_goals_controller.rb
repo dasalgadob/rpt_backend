@@ -3,7 +3,7 @@ class DepartmentGoalsController < ApplicationController
 
   # GET /department_goals
   def index
-    @department_goals = DepartmentGoal.includes(:department, :period)
+    @department_goals = DepartmentGoal.includes(:department, :period, employee: :department)
     @department_goals = @department_goals.where(period_id: params[:period_id]) if params[:period_id].present?
     @department_goals = @department_goals.for_department(params[:department_id]) if params[:department_id].present?
     @department_goals = @department_goals.for_employee(params[:employee_id]) if params[:employee_id].present?
