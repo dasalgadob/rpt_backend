@@ -18,6 +18,7 @@ class Companies::UsersController < ApplicationController
   # POST /companies/:company_id/users
   def create
     @user = @company.users.build(user_params)
+    @user.uid = @user.email  # Set uid to be equal to email
     
     if @user.save
       render json: {
