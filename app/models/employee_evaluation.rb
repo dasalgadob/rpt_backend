@@ -58,6 +58,11 @@ class EmployeeEvaluation < ApplicationRecord
     puts("🚀 ~ raw_score:", raw_score)
     return 0 if raw_score.nil? || raw_score < 90.0
 
+    # Check if personal percentage is less than 85.0
+    personal_perc = personal_percentage
+    puts("🚀 ~ personal_percentage:", personal_perc)
+    return 0 if personal_perc < 85.0
+
     # Replace rounded_score with the percentage from period.score for this period
     utilidad_raw = period.score
     return 0 if utilidad_raw.nil?
@@ -120,6 +125,38 @@ class EmployeeEvaluation < ApplicationRecord
     ptw = PositionTypeWeight.where(period: period, position_type: pt).first
     return 0 unless position_score && ptw
     (position_score * (ptw.position_percentage / 100.0)).round(2)
+  end
+
+  def job_competencies_percentage_result
+    return nil unless period && job_competencies_score && employee
+    pt = employee.position_type
+    ptw = PositionTypeWeight.where(period: period, position_type: pt).first
+    return nil unless ptw&.job_competencies_percentage
+    (job_competencies_score * (ptw.job_competencies_percentage / 100.0)).round(2)
+  end
+
+  def personal_percentage
+    return 0 unless position_type_weight
+
+    # Get result values, defaulting to 0 if nil
+    dept_result = department_percentage_result || 0
+    pos_result = position_percentage_result || 0
+    comp_result = job_competencies_percentage_result || 0
+
+    # Get weight percentages, defaulting to 0 if nil
+    dept_weight = position_type_weight.department_percentage || 0
+    pos_weight = position_type_weight.position_percentage || 0
+    comp_weight = position_type_weight.job_competencies_percentage || 0
+
+    # Calculate sum of results and sum of weights
+    results_sum = dept_result + pos_result + comp_result
+    weights_sum = dept_weight + pos_weight + comp_weight
+
+    # Avoid division by zero
+    return 0 if weights_sum == 0
+
+    # Calculate percentage and round to 2 decimals
+    ((results_sum / weights_sum) * 100).round(2)
   end
 
   def department_score_result(company)
