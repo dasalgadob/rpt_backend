@@ -3,13 +3,17 @@
 # Table name: periods
 #
 #  id                            :bigint           not null, primary key
+#  adjustment_factor             :decimal(10, 2)
 #  company_profit_percentage     :decimal(5, 2)
+#  curvature                     :decimal(10, 2)
+#  curvature2                    :decimal(10, 2)
 #  formula_above_value           :text
 #  formula_below_value           :text
 #  goal_achieved                 :decimal(, )
 #  goal_ceil                     :decimal(, )
 #  goal_floor                    :decimal(, )
 #  goal_value                    :decimal(, )
+#  inferior_limit                :decimal(10, 2)
 #  minimum_score_area_goals      :decimal(5, 2)
 #  minimum_score_corporate_goals :decimal(5, 2)
 #  minimum_score_employee        :decimal(5, 2)

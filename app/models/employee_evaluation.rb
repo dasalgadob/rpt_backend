@@ -181,6 +181,16 @@ class EmployeeEvaluation < ApplicationRecord
     dept = department_percentage_result || 0
     pos  = position_percentage_result || 0
     competencies = competencies_score_result || 0
-    (corp + dept + pos + competencies).round(2)
+    total = (corp + dept + pos + competencies).round(2)
+    [total, 100.0].min
+  end
+
+  def total_variable_compensation
+    var_comp = variable_compensation
+    salary = employee&.salary
+    
+    return nil if var_comp.nil? || salary.nil?
+    
+    (var_comp * salary.to_f).round(2)
   end
 end

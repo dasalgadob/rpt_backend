@@ -4,6 +4,7 @@
 #
 #  id               :bigint           not null, primary key
 #  name             :string
+#  salary           :decimal(, )
 #  created_at       :datetime         not null
 #  updated_at       :datetime         not null
 #  department_id    :bigint           not null
@@ -24,7 +25,7 @@
 #  fk_rails_...  (position_type_id => position_types.id)
 #
 class EmployeeSerializer < ActiveModel::Serializer
-  attributes :id, :employee_id, :name, :department_id, :department_name, :position_id, :position_name, :position_type_id, :position_type_name, :employee_name, :employee_id, :position_type_weight
+  attributes :id, :employee_id, :name, :salary, :department_id, :department_name, :position_id, :position_name, :position_type_id, :position_type_name, :employee_name, :employee_id, :position_type_weight
 
   belongs_to :department
   belongs_to :position
@@ -64,5 +65,9 @@ class EmployeeSerializer < ActiveModel::Serializer
 
   def position_type_weight
     object.position_type&.position_type_weights
+  end
+
+  def salary
+    object.salary&.to_f&.round(2)
   end
 end

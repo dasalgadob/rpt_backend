@@ -30,6 +30,7 @@ class EmployeesDownloadService
       headers = [
         "ID empleado",
         "Empleado",
+        "Salario",
         "Area", 
         "Cargo",
         "Tipo de posicion"
@@ -41,6 +42,7 @@ class EmployeesDownloadService
         sheet.add_row [
           employee.employee_id,
           employee.name,
+          employee.salary&.to_f&.round(2),
           employee.department&.name,
           employee.position&.name,
           employee.position_type&.name
@@ -48,7 +50,7 @@ class EmployeesDownloadService
       end
       
       # Auto-size columns
-      sheet.column_widths 15, 25, 20, 25, 20
+      sheet.column_widths 15, 25, 15, 20, 25, 20
     end
     
     package.to_stream.read

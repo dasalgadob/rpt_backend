@@ -28,7 +28,8 @@ class EmployeeEvaluationsDownloadService
         "% Competencias",
         "Puntuación competencias",
         "Puntuación Total",
-        "Compensación Variable"
+        "Compensación Variable",
+        "Compensacion variable total"
       ]
       
       sheet.add_row headers
@@ -45,6 +46,7 @@ class EmployeeEvaluationsDownloadService
         department_percentage_result = evaluation.department_percentage_result
         position_percentage_result = evaluation.position_percentage_result
         variable_compensation = evaluation.variable_compensation
+        total_variable_compensation = evaluation.total_variable_compensation
         
         row_data = [
           employee.employee_id,
@@ -61,7 +63,8 @@ class EmployeeEvaluationsDownloadService
           "#{position_type_weight&.job_competencies_percentage || 0}%",
           (evaluation.job_competencies_score&.to_f || 0).round(2),
           (evaluation.evaluation_score&.to_f || 0).round(2),
-          (variable_compensation&.to_f || 0).round(2)
+          (variable_compensation&.to_f || 0).round(2),
+          total_variable_compensation.present? ? total_variable_compensation.round(2) : ""
         ]
         
         sheet.add_row row_data

@@ -16,9 +16,10 @@ class EmployeesUploadService
       begin
         employee_id = spreadsheet.cell(row, 1)&.to_s&.strip
         name = spreadsheet.cell(row, 2)&.to_s&.strip
-        area_name = spreadsheet.cell(row, 3)&.to_s&.strip
-        position_name = spreadsheet.cell(row, 4)&.to_s&.strip
-        position_type_name = spreadsheet.cell(row, 5)&.to_s&.strip
+        salary = spreadsheet.cell(row, 3)&.to_f if spreadsheet.cell(row, 3).present?
+        area_name = spreadsheet.cell(row, 4)&.to_s&.strip
+        position_name = spreadsheet.cell(row, 5)&.to_s&.strip
+        position_type_name = spreadsheet.cell(row, 6)&.to_s&.strip
 
         next if name.blank? && area_name.blank? && employee_id.blank?
 
@@ -50,8 +51,11 @@ class EmployeesUploadService
         end
 
         if existing_employee
+          Rails.logger.debug "Is salary present: #{salary.present?} "
+          Rails.logger.debug "salary value: #{salary} "
           existing_employee.update!(
             name: name.presence || existing_employee.name,
+            salary: salary.present? ? salary : existing_employee.salary,
             department: department || existing_employee.department,
             position: position || existing_employee.position,
             position_type: position_type || existing_employee.position_type
@@ -61,6 +65,7 @@ class EmployeesUploadService
           Employee.create!(
             name: name,
             employee_id: employee_id,
+            salary: salary,
             department: department,
             position: position,
             position_type: position_type
@@ -73,6 +78,7 @@ class EmployeesUploadService
           message: e.message,
           data: {
             name: name,
+            salary: salary,
             area_name: area_name,
             employee_id: employee_id,
             position_name: position_name,

@@ -3,13 +3,17 @@
 # Table name: periods
 #
 #  id                            :bigint           not null, primary key
+#  adjustment_factor             :decimal(10, 2)
 #  company_profit_percentage     :decimal(5, 2)
+#  curvature                     :decimal(10, 2)
+#  curvature2                    :decimal(10, 2)
 #  formula_above_value           :text
 #  formula_below_value           :text
 #  goal_achieved                 :decimal(, )
 #  goal_ceil                     :decimal(, )
 #  goal_floor                    :decimal(, )
 #  goal_value                    :decimal(, )
+#  inferior_limit                :decimal(10, 2)
 #  minimum_score_area_goals      :decimal(5, 2)
 #  minimum_score_corporate_goals :decimal(5, 2)
 #  minimum_score_employee        :decimal(5, 2)
@@ -30,6 +34,10 @@
 #  fk_rails_...  (company_id => companies.id)
 #
 class PeriodSerializer < ActiveModel::Serializer
-  attributes :id, :name, :status, :period_type, :minimum_score_employee, :formula_above_value, :formula_below_value, :goal_floor, :goal_value, :goal_ceil, :goal_achieved, :score
+  attributes :id, :name, :status, :period_type, :minimum_score_employee, :company_profit_percentage, :formula_above_value, :formula_below_value, :goal_floor, :goal_value, :goal_ceil, :goal_achieved, :score
   has_one :company
+
+  def company_profit_percentage
+    object.company_profit_percentage&.to_f&.round(2)
+  end
 end

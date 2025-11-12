@@ -25,7 +25,7 @@
 #  fk_rails_...  (period_id => periods.id)
 #
 class EmployeeEvaluationSerializer < ActiveModel::Serializer
-  attributes :id, :evaluation_score, :corporate_percentage, :department_percentage, :position_percentage, :job_competencies_score, :position_type_weight_info, :corporate_percentage_result, :department_percentage_result, :position_percentage_result, :job_competencies_percentage_result, :personal_percentage, :department_score_result, :position_score_result, :employee, :variable_compensation
+  attributes :id, :evaluation_score, :corporate_percentage, :department_percentage, :position_percentage, :job_competencies_score, :position_type_weight_info, :corporate_percentage_result, :department_percentage_result, :position_percentage_result, :job_competencies_percentage_result, :personal_percentage, :department_score_result, :position_score_result, :employee, :variable_compensation, :total_variable_compensation
   has_one :employee
   has_one :period
 
@@ -77,5 +77,9 @@ class EmployeeEvaluationSerializer < ActiveModel::Serializer
 
   def evaluation_score
     object.evaluation_score
+  end
+
+  def total_variable_compensation
+    object.total_variable_compensation
   end
 end

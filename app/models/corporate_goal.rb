@@ -3,6 +3,9 @@
 # Table name: corporate_goals
 #
 #  id                  :bigint           not null, primary key
+#  adjustment_factor   :decimal(10, 2)
+#  curvature           :decimal(10, 2)
+#  curvature2          :decimal(10, 2)
 #  description         :string
 #  formula_above_value :text
 #  formula_below_value :text
@@ -11,6 +14,7 @@
 #  goal_ceil           :decimal(, )
 #  goal_floor          :decimal(, )
 #  goal_value          :decimal(, )
+#  inferior_limit      :decimal(10, 2)
 #  percentage          :decimal(5, 2)
 #  score               :decimal(5, 2)
 #  created_at          :datetime         not null
