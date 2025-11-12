@@ -64,7 +64,7 @@ class EmployeeEvaluation < ApplicationRecord
     return 0 if personal_perc < 85.0
 
     # Replace rounded_score with the percentage from period.score for this period
-    utilidad_raw = period.score
+    utilidad_raw = period.company_profit_percentage
     return 0 if utilidad_raw.nil?
     # If utilidad score is below 95.0, return 0
     return 0 if utilidad_raw.to_f < 95.0
