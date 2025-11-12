@@ -58,10 +58,6 @@ class Period < ApplicationRecord
             :minimum_score_employee, :minimum_score_position_goals,
             numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
 
-  def score
-    calculate_goal_result&.to_f&.round(2)
-  end
-
   def minimum_score_employee
     read_attribute(:minimum_score_employee)&.to_f
   end
@@ -88,20 +84,5 @@ class Period < ApplicationRecord
     if Period.where(company_id: company_id, status: 'abierto').where.not(id: id).exists?
       errors.add(:base, 'Only one open period is allowed per company')
     end
-  end
-
-  def calculate_goal_result
-    return 0 if goal_achieved.nil? || goal_floor.nil? || goal_value.nil?
-    result = 0 
-    x = goal_achieved
-    if x >= goal_floor && x <= goal_value
-      result = (eval("#{formula_below_value}") * 100)&.to_f
-    elsif x > goal_value && x <= goal_ceil
-      result = (eval("#{formula_above_value}") * 100)&.to_f
-    end
-    if result > 110.0
-      result = 110.0
-    end
-    result
   end
 end

@@ -150,12 +150,25 @@ class EmployeeEvaluation < ApplicationRecord
 
     # Calculate sum of results and sum of weights
     results_sum = dept_result + pos_result + comp_result
+    Rails.logger.debug("Sum personal_percentage: #{results_sum}")
     weights_sum = dept_weight + pos_weight + comp_weight
+    Rails.logger.debug("Sum weights_sum: #{weights_sum}")
 
     # Avoid division by zero
     return 0 if weights_sum == 0
 
-    # Calculate percentage and round to 2 decimals
+    # Apply formula if available, otherwise use default calculation
+    if period&.formula_below_value.present?
+      begin
+        x = results_sum / weights_sum
+        result = eval(period.formula_below_value)
+        return (result * 100).round(2) if result.is_a?(Numeric)
+      rescue StandardError => e
+        Rails.logger.error("formula_below_value eval error for EmployeeEvaluation ##{id}: #{e.message}")
+      end
+    end
+    
+    # Fallback to default calculation
     ((results_sum / weights_sum) * 100).round(2)
   end
 

@@ -34,7 +34,7 @@
 #  fk_rails_...  (company_id => companies.id)
 #
 class PeriodSerializer < ActiveModel::Serializer
-  attributes :id, :name, :status, :period_type, :minimum_score_employee, :company_profit_percentage, :formula_above_value, :formula_below_value, :goal_floor, :goal_value, :goal_ceil, :goal_achieved, :score
+  attributes :id, :name, :status, :period_type, :minimum_score_employee, :company_profit_percentage, :formula_above_value, :formula_below_value, :goal_floor, :goal_value, :goal_ceil, :goal_achieved
   has_one :company
 
   def company_profit_percentage
