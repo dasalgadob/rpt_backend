@@ -63,7 +63,8 @@ class DepartmentGoalSerializer < ActiveModel::Serializer
     {
       id: object.employee&.id,
       name: object.employee&.name,  
-      department: object.employee&.department
+      department: object.employee&.department,
+      is_base_110: object.employee&.is_base_110
     }
   end
 end
