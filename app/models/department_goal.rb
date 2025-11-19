@@ -60,7 +60,7 @@ class DepartmentGoal < ApplicationRecord
     # Check if all scores have values (not null)
     all_scores_present = department_goals.all? { |goal| goal.score.present? }
     
-    if total_percentage == 100.0 && all_scores_present
+    if (total_percentage - 100.0).abs <= 0.01 && all_scores_present
       # Calculate weighted average: (percentage1 * score1 + percentage2 * score2 + ...) / 100
       weighted_sum = department_goals.sum { |goal| (goal.percentage * goal.score) }
       weighted_sum / 100.0

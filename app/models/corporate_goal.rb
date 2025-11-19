@@ -53,7 +53,7 @@ class CorporateGoal < ApplicationRecord
     # Check if all scores have values (not null)
     all_scores_present = corporate_goals.all? { |goal| goal.score.present? }
     
-    if total_percentage == 100.0 && all_scores_present
+    if (total_percentage - 100.0).abs <= 0.01 && all_scores_present
       # Calculate weighted average: (percentage1 * score1 + percentage2 * score2 + ...) / 100
       weighted_sum = corporate_goals.sum { |goal| (goal.percentage * goal.score) }
       weighted_sum / 100.0
@@ -86,7 +86,7 @@ class CorporateGoal < ApplicationRecord
       total_percentage = @corporate_goals.sum(&:percentage)
       total_score = 0
       all_scores_present = @corporate_goals.all? { |goal| goal.score.present? }
-      if total_percentage == 100.0 && all_scores_present
+      if (total_percentage - 100.0).abs <= 0.01 && all_scores_present
         # Calculate weighted average: (percentage1 * score1 + percentage2 * score2 + ...) / 100
         weighted_sum = @corporate_goals.sum { |goal| (goal.percentage * goal.score) }
         total_score = weighted_sum / 100.0
