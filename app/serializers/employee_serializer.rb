@@ -3,6 +3,7 @@
 # Table name: employees
 #
 #  id               :bigint           not null, primary key
+#  is_base_110      :boolean          default(FALSE)
 #  name             :string
 #  salary           :decimal(, )
 #  created_at       :datetime         not null
@@ -25,7 +26,7 @@
 #  fk_rails_...  (position_type_id => position_types.id)
 #
 class EmployeeSerializer < ActiveModel::Serializer
-  attributes :id, :employee_id, :name, :salary, :department_id, :department_name, :position_id, :position_name, :position_type_id, :position_type_name, :employee_name, :employee_id, :position_type_weight
+  attributes :id, :employee_id, :name, :salary, :is_base_110, :department_id, :department_name, :position_id, :position_name, :position_type_id, :position_type_name, :employee_name, :employee_id, :position_type_weight
 
   belongs_to :department
   belongs_to :position

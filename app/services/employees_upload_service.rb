@@ -17,9 +17,11 @@ class EmployeesUploadService
         employee_id = spreadsheet.cell(row, 1)&.to_s&.strip
         name = spreadsheet.cell(row, 2)&.to_s&.strip
         salary = spreadsheet.cell(row, 3)&.to_f if spreadsheet.cell(row, 3).present?
-        area_name = spreadsheet.cell(row, 4)&.to_s&.strip
-        position_name = spreadsheet.cell(row, 5)&.to_s&.strip
-        position_type_name = spreadsheet.cell(row, 6)&.to_s&.strip
+        is_base_110_value = spreadsheet.cell(row, 4)&.to_s&.strip&.downcase
+        is_base_110 = is_base_110_value == "si" || is_base_110_value == "yes" || is_base_110_value == "true" || is_base_110_value == "1"
+        area_name = spreadsheet.cell(row, 5)&.to_s&.strip
+        position_name = spreadsheet.cell(row, 6)&.to_s&.strip
+        position_type_name = spreadsheet.cell(row, 7)&.to_s&.strip
 
         next if name.blank? && area_name.blank? && employee_id.blank?
 
@@ -56,6 +58,7 @@ class EmployeesUploadService
           existing_employee.update!(
             name: name.presence || existing_employee.name,
             salary: salary.present? ? salary : existing_employee.salary,
+            is_base_110: is_base_110,
             department: department || existing_employee.department,
             position: position || existing_employee.position,
             position_type: position_type || existing_employee.position_type
@@ -66,6 +69,7 @@ class EmployeesUploadService
             name: name,
             employee_id: employee_id,
             salary: salary,
+            is_base_110: is_base_110,
             department: department,
             position: position,
             position_type: position_type
@@ -79,6 +83,7 @@ class EmployeesUploadService
           data: {
             name: name,
             salary: salary,
+            is_base_110: is_base_110,
             area_name: area_name,
             employee_id: employee_id,
             position_name: position_name,

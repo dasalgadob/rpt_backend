@@ -3,6 +3,7 @@
 # Table name: employees
 #
 #  id               :bigint           not null, primary key
+#  is_base_110      :boolean          default(FALSE)
 #  name             :string
 #  salary           :decimal(, )
 #  created_at       :datetime         not null
