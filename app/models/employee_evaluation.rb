@@ -195,7 +195,7 @@ class EmployeeEvaluation < ApplicationRecord
     pos  = position_percentage_result || 0
     competencies = competencies_score_result || 0
     total = (corp + dept + pos + competencies).round(2)
-    [total, 100.0].min
+    [total, 110.0].min
   end
 
   def total_variable_compensation
