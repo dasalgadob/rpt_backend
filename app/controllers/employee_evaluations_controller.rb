@@ -307,6 +307,28 @@ class EmployeeEvaluationsController < ApplicationController
               type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
   end
 
+  # POST /companies/:company_id/employee_evaluations/upload
+  def upload
+    unless params[:file].present?
+      render json: { error: "No file provided" }, status: :unprocessable_entity
+      return
+    end
+
+    begin
+      service = EvaluationsUploadService.new(@company, params[:file])
+      unless service.process
+        render json: { error: "No file provided or invalid file" }, status: :unprocessable_entity
+        return
+      end
+      render json: {
+        message: "File processed successfully",
+        results: service.results
+      }, status: :ok
+    rescue => e
+      render json: { error: "Error processing file: #{e.message}" }, status: :unprocessable_entity
+    end
+  end
+
   private
     # Set the parent company
     def set_company
