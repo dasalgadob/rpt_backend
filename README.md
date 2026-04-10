@@ -44,6 +44,16 @@ docker-compose -f docker-compose.prop.yml down
 
 docker-compose -f docker-compose.prop.yml up --build -d
 
+docker-compose -f docker-compose.prop.yml run --rm web bundle install
+
+docker-compose -f docker-compose.prop.yml exec web bundle install
+docker-compose -f docker-compose.prop.yml exec web bundle exec rake db:seed:goals
+docker-compose -f docker-compose.prop.yml exec web bundle exec rake goals:redistribute_percentages
+
+
+docker-compose -f docker-compose.prop.yml exec web bundle exec rails console
+
+docker-compose -f docker-compose.prop.yml restart web
 
 ## test user
 User.create!(

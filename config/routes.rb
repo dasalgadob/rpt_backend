@@ -27,6 +27,7 @@ Rails.application.routes.draw do
       collection do
         get :download
         post :upload
+        delete :destroy_all
       end
     end
     resources :positions
@@ -34,6 +35,7 @@ Rails.application.routes.draw do
       collection do
         get :download
         post :upload
+        delete :destroy_all
       end
     end
     resources :position_type_weights

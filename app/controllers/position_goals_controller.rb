@@ -81,6 +81,13 @@ class PositionGoalsController < ApplicationController
     render json: { created: service.created, updated: service.updated, skipped: service.skipped }, status: :ok
   end
 
+  # DELETE /companies/:company_id/position_goals/destroy_all
+  def destroy_all
+    position_ids = @company.positions.pluck(:id)
+    deleted_count = PositionGoal.where(position_id: position_ids).destroy_all.length
+    render json: { deleted: deleted_count }, status: :ok
+  end
+
   # GET /companies/:company_id/position_goals/download
   def download
     service = PositionGoalsDownloadService.new(@company, params[:period_id])
